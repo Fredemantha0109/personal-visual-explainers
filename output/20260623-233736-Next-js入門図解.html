@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Next.js 入門図解</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
+    background: #f0f4f8;
+    color: #1a202c;
+    line-height: 1.6;
+  }
+
+  .page-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: clamp(16px, 4vw, 48px) clamp(12px, 4vw, 40px);
+  }
+
+  /* ヘッダー */
+  .hero {
+    background: linear-gradient(135deg, #000 0%, #1a1a2e 100%);
+    color: #fff;
+    border-radius: 18px;
+    padding: clamp(24px, 5vw, 48px) clamp(20px, 5vw, 48px);
+    margin-bottom: 32px;
+    text-align: center;
+  }
+  .hero .badge {
+    display: inline-block;
+    background: #fff;
+    color: #000;
+    font-size: clamp(10px, 2vw, 13px);
+    font-weight: 700;
+    border-radius: 20px;
+    padding: 4px 14px;
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+  }
+  .hero h1 {
+    font-size: clamp(22px, 5vw, 40px);
+    font-weight: 900;
+    margin-bottom: 10px;
+  }
+  .hero p {
+    font-size: clamp(13px, 2.5vw, 17px);
+    color: #adb5bd;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* セクションタイトル */
+  .section-title {
+    font-size: clamp(15px, 3vw, 20px);
+    font-weight: 800;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title .icon {
+    font-size: 1.2em;
+  }
+
+  /* カード共通 */
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: clamp(16px, 3vw, 28px);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    margin-bottom: 24px;
+  }
+
+  /* ─── SECTION 1: Webサイトの仕組み ─── */
+  .web-flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .web-box {
+    border-radius: 12px;
+    padding: 14px 18px;
+    text-align: center;
+    min-width: 110px;
+  }
+  .web-box .label {
+    font-size: clamp(12px, 2.5vw, 15px);
+    font-weight: 700;
+  }
+  .web-box .desc {
+    font-size: clamp(10px, 1.8vw, 12px);
+    color: #666;
+    margin-top: 4px;
+  }
+  .web-arrow {
+    font-size: clamp(18px, 4vw, 28px);
+    color: #888;
+  }
+  .box-user  { background: #e8f5e9; border: 2px solid #4caf50; }
+  .box-server{ background: #e3f2fd; border: 2px solid #2196f3; }
+  .box-db    { background: #fff3e0; border: 2px solid #ff9800; }
+
+  /* ─── SECTION 2: Next.jsとは ─── */
+  .nextjs-center {
+    background: linear-gradient(135deg, #000, #333);
+    color: #fff;
+    border-radius: 16px;
+    padding: 20px 24px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .nextjs-center h3 { font-size: clamp(16px, 3vw, 22px); font-weight: 900; }
+  .nextjs-center p  { font-size: clamp(12px, 2vw, 14px); color: #ccc; margin-top: 6px; }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-top: 4px;
+  }
+  .feature-item {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 14px 16px;
+    border-left: 4px solid;
+  }
+  .feature-item h4 {
+    font-size: clamp(12px, 2.2vw, 14px);
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .feature-item p {
+    font-size: clamp(11px, 1.8vw, 13px);
+    color: #555;
+  }
+  .fi-blue  { border-color: #2196f3; }
+  .fi-green { border-color: #4caf50; }
+  .fi-purple{ border-color: #9c27b0; }
+  .fi-orange{ border-color: #ff9800; }
+
+  /* ─── SECTION 3: レンダリング方式 ─── */
+  .render-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .render-card {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid;
+  }
+  .render-head {
+    padding: 12px 16px;
+    color: #fff;
+    font-weight: 800;
+    font-size: clamp(13px, 2.2vw, 15px);
+  }
+  .render-body {
+    background: #fff;
+    padding: 14px 16px;
+  }
+  .render-body .term {
+    font-size: clamp(10px, 1.8vw, 12px);
+    font-weight: 700;
+    color: #888;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .render-body .meaning {
+    font-size: clamp(12px, 2vw, 14px);
+    color: #333;
+    margin-bottom: 10px;
+  }
+  .render-body .example {
+    font-size: clamp(11px, 1.8vw, 13px);
+    color: #555;
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  .render-body .example strong { color: #000; }
+
+  .rc-ssg  { border-color: #4caf50; }
+  .rc-ssg .render-head  { background: #4caf50; }
+  .rc-ssr  { border-color: #2196f3; }
+  .rc-ssr .render-head  { background: #2196f3; }
+  .rc-isr  { border-color: #9c27b0; }
+  .rc-isr .render-head  { background: #9c27b0; }
+  .rc-csr  { border-color: #ff9800; }
+  .rc-csr .render-head  { background: #ff9800; }
+
+  /* ─── SECTION 4: ファイル構成 ─── */
+  .folder-tree {
+    background: #1a1a2e;
+    color: #e2e8f0;
+    border-radius: 14px;
+    padding: clamp(16px, 3vw, 28px);
+    font-family: 'Courier New', monospace;
+    font-size: clamp(12px, 2.2vw, 14px);
+    overflow-x: auto;
+  }
+  .folder-tree .folder { color: #90caf9; font-weight: 700; }
+  .folder-tree .file   { color: #a5d6a7; }
+  .folder-tree .comment{ color: #888; margin-left: 8px; font-style: italic; }
+  .folder-tree .line   { margin: 3px 0; white-space: nowrap; }
+
+  /* ─── SECTION 5: ReactとNext.jsの違い ─── */
+  .compare-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media(max-width: 480px) {
+    .compare-wrap { grid-template-columns: 1fr; }
+  }
+  .compare-col {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid;
+  }
+  .compare-head {
+    padding: 12px 16px;
+    font-weight: 800;
+    font-size: clamp(13px, 2.5vw, 16px);
+    text-align: center;
+  }
+  .compare-body { padding: 14px 16px; }
+  .compare-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: clamp(12px, 2vw, 14px);
+    margin-bottom: 10px;
+  }
+  .compare-item .dot { flex-shrink: 0; margin-top: 3px; }
+
+  .cc-react { border-color: #61dafb; }
+  .cc-react .compare-head { background: #61dafb; color: #000; }
+  .cc-next  { border-color: #000; }
+  .cc-next .compare-head  { background: #000; color: #fff; }
+
+  /* ─── SECTION 6: 全体フロー図 ─── */
+  .flow-svg-wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  /* ─── 用語バッジ ─── */
+  .term-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .term-badge {
+    background: #f0f4ff;
+    border: 1px solid #c7d2fe;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: clamp(11px, 2vw, 13px);
+    color: #3730a3;
+  }
+  .term-badge strong { color: #000; }
+
+  /* ─── まとめ ─── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-top: 8px;
+  }
+  .summary-item {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+  .summary-item .num {
+    font-size: clamp(28px, 5vw, 40px);
+    font-weight: 900;
+    color: #000;
+    line-height: 1;
+  }
+  .summary-item .label {
+    font-size: clamp(12px, 2vw, 14px);
+    font-weight: 700;
+    margin-top: 6px;
+  }
+  .summary-item .sub {
+    font-size: clamp(10px, 1.8vw, 12px);
+    color: #666;
+    margin-top: 4px;
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 2px dashed #e2e8f0;
+    margin: 24px 0;
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- ヘッダー -->
+  <div class="hero">
+    <div class="badge">🖼 図解 for 新卒エンジニア</div>
+    <h1>Next.js って何者？</h1>
+    <p>「なんとなく聞いたことある」を「ちゃんとわかった！」に変える入門図解</p>
+  </div>
+
+  <!-- STEP0: まずWebの仕組みを知ろう -->
+  <div class="card">
+    <div class="section-title"><span class="icon">🌐</span>まず前提：Webサイトが表示されるまで</div>
+    <p style="font-size:clamp(12px,2vw,14px); color:#555; margin-bottom:16px;">
+      Webサイトは「あなたのPC/スマホ（<b>ブラウザ</b>）」が「サーバー（データを持つコンピュータ）」に
+      「このページを見せて！」とお願いして、返ってきたデータを表示する仕組みです。
+    </p>
+    <div class="web-flow">
+      <div class="web-box box-user">
+        <div class="label">👤 あなた</div>
+        <div class="desc">ブラウザ<br>（Chrome等）</div>
+      </div>
+      <div class="web-arrow">→</div>
+      <div>
+        <svg width="80" height="40" viewBox="0 0 80 40">
+          <rect x="5" y="10" width="70" height="20" rx="10" fill="#e0e0e0"/>
+          <text x="40" y="25" text-anchor="middle" font-size="11" fill="#555">インターネット</text>
+        </svg>
+      </div>
+      <div class="web-arrow">→</div>
+      <div class="web-box box-server">
+        <div class="label">🖥 サーバー</div>
+        <div class="desc">ページを作って<br>返す機械</div>
+      </div>
+      <div class="web-arrow">⇄</div>
+      <div class="web-box box-db">
+        <div class="label">🗄 データベース</div>
+        <div class="desc">記事・商品等<br>のデータ倉庫</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP1: Next.jsとは -->
+  <div class="card">
+    <div class="section-title"><span class="icon">⚡</span>Next.js とは？</div>
+    <div class="nextjs-center">
+      <h3>Next.js（ネクストジェイエス）</h3>
+      <p>Webサイト・Webアプリを作るための「開発フレームワーク（道具セット）」</p>
+    </div>
+    <p style="font-size:clamp(12px,2vw,14px); color:#555; margin-bottom:16px;">
+      <b>フレームワーク</b>とは「よく使う機能があらかじめ入った便利な道具セット」のこと。
+      一から作ると大変な機能（ページ移動、画像最適化など）が最初から使える状態になっています。
+      Next.jsは特に <b>React（リアクト）</b>※ をベースに作られています。
+    </p>
+    <div style="background:#fff9c4; border-radius:10px; padding:12px 16px; font-size:clamp(11px,1.8vw,13px); color:#555; margin-bottom:16px;">
+      ※ <b>React</b> = 画面のパーツ（ボタン、リストなど）を作るためのJavaScript製ライブラリ（部品集）
+    </div>
+    <div class="feature-grid">
+      <div class="feature-item fi-blue">
+        <h4>🔗 ページ自動生成</h4>
+        <p>「pages」フォルダにファイルを置くだけでURLが決まる。設定不要！</p>
+      </div>
+      <div class="feature-item fi-green">
+        <h4>🚀 高速表示</h4>
+        <p>ページを事前に作っておく仕組みで、表示が爆速になる</p>
+      </div>
+      <div class="feature-item fi-purple">
+        <h4>🔧 サーバー機能内蔵</h4>
+        <p>別でサーバーを用意しなくても、データ処理ができる</p>
+      </div>
+      <div class="feature-item fi-orange">
+        <h4>🖼 画像最適化</h4>
+        <p>画像を自動で小さく・速くしてくれる機能が標準搭載</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP2: 4つのレンダリング方式 -->
+  <div class="card">
+    <div class="section-title"><span class="icon">🏭</span>「ページをいつ作るか」が選べる（レンダリング方式）</div>
+    <p style="font-size:clamp(12px,2vw,14px); color:#555; margin-bottom:16px;">
+      <b>レンダリング</b>とは「HTMLページ（画面）を作ること」。
+      Next.jsの最大の特徴は、<b>いつ・どこでページを作るか</b>を目的に応じて選べる点です。
+    </p>
+    <div class="render-grid">
+      <div class="render-card rc-ssg">
+        <div class="render-head">📦 SSG（静的生成）</div>
+        <div class="render-body">
+          <div class="term">Static Site Generation</div>
+          <div class="meaning">ビルド時（公開前の準備段階）にページを全部作っておく方法</div>
+          <div class="example">
+            <strong>例え：</strong>試験前に模範解答を用意しておいて、当日はそれを渡すだけ<br>
+            <strong>向き：</strong>ブログ・会社HP
+          </div>
+        </div>
+      </div>
+      <div class="render-card rc-ssr">
+        <div class="render-head">⚡ SSR（サーバー生成）</div>
+        <div class="render-body">
+          <div class="term">Server Side Rendering</div>
+          <div class="meaning">ユーザーがアクセスするたびに、サーバーがその場でページを作る方法</div>
+          <div class="example">
+            <strong>例え：</strong>注文が入ってから料理を作るレストラン<br>
+            <strong>向き：</strong>ニュース・在庫表示
+          </div>
+        </div>
+      </div>
+      <div class="render-card rc-isr">
+        <div class="render-head">🔄 ISR（定期更新）</div>
+        <div class="render-body">
+          <div class="term">Incremental Static Regeneration</div>
+          <div class="meaning">SSGで作ったページを、一定時間ごとに自動で更新する方法</div>
+          <div class="example">
+            <strong>例え：</strong>1時間ごとに更新される電光掲示板<br>
+            <strong>向き：</strong>ECサイト・価格表
+          </div>
+        </div>
+      </div>
+      <div class="render-card rc-csr">
+        <div class="render-head">🖥 CSR（ブラウザ生成）</div>
+        <div class="render-body">
+          <div class="term">Client Side Rendering</div>
+          <div class="meaning">ページの中身をブラウザ側でJavaScriptを使って作る方法</div>
+          <div class="example">
+            <strong>例え：</strong>材料を渡して「自分で作ってね」と言う方式<br>
+            <strong>向き：</strong>ダッシュボード・管理画面
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP3: ReactとNext.jsの違い -->
+  <div class="card">
+    <div class="section-title"><span class="icon">⚖️</span>React と Next.js の違い</div>
+    <p style="font-size:clamp(12px,2vw,14px); color:#555; margin-bottom:14px;">
+      「ReactとNext.jsって何が違うの？」という疑問を解消します。
+    </p>
+    <div class="compare-wrap">
+      <div class="compare-col cc-react">
+        <div class="compare-head">⚛️ React だけ</div>
+        <div class="compare-body">
+          <div class="compare-item"><span class="dot">🔧</span><span>画面パーツ（コンポーネント）を作る道具</span></div>
+          <div class="compare-item"><span class="dot">❌</span><span>ページ移動の仕組みは自分で用意</span></div>
+          <div class="compare-item"><span class="dot">❌</span><span>サーバー機能は別途必要</span></div>
+          <div class="compare-item"><span class="dot">❌</span><span>SEO対策（検索に載りやすくする）は難しい</span></div>
+          <div class="compare-item"><span class="dot">🎯</span><span>自由度が高い分、設定が多い</span></div>
+        </div>
+      </div>
+      <div class="compare-col cc-next">
+        <div class="compare-head">▲ Next.js</div>
+        <div class="compare-body">
+          <div class="compare-item"><span class="dot">✅</span><span>Reactの機能が全部使える</span></div>
+          <div class="compare-item"><span class="dot">✅</span><span>ページ移動は自動で設定済み</span></div>
+          <div class="compare-item"><span class="dot">✅</span><span>サーバー機能が内蔵されている</span></div>
+          <div class="compare-item"><span class="dot">✅</span><span>SEOに強い（SSR/SSGのおかげ）</span></div>
+          <div class="compare-item"><span class="dot">🎯</span><span>すぐ開発を始められる</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#e8f5e9; border-radius:10px; padding:12px 16px; font-size:clamp(12px,2vw,14px); margin-top:14px;">
+      💡 <b>まとめると：</b> ReactはNext.jsの「エンジン」部分。Next.jsはそのエンジンに「カーナビ・エアコン・安全装備」を追加した完成車のようなもの。
+    </div>
+  </div>
+
+  <!-- STEP4: ファイル構成 -->
+  <div class="card">
+    <div class="section-title"><span class="icon">📁</span>フォルダ・ファイルの構成</div>
+    <p style="font-size:clamp(12px,2vw,14px); color:#555; margin-bottom:14px;">
+      Next.jsのプロジェクトを作ると、こんなフォルダ構成になります。<b>App Router</b>（最新版の方式）の例です。
+    </p>
+    <div class="folder-tree">
+      <div class="line"><span class="folder">my-app/</span> <span class="comment">← プロジェクトの全体フォルダ</span></div>
+      <div class="line">├── <span class="folder">app/</span> <span class="comment">← ページやレイアウトを置く場所</span></div>
+      <div class="line">│   ├── <span class="file">page.tsx</span> <span class="comment">← トップページ（https://example.com/）</span></div>
+      <div class="line">│   ├── <span class="file">layout.tsx</span> <span class="comment">← 全ページ共通のデザイン枠（ヘッダー等）</span></div>
+      <div class="line">│   └── <span class="folder">about/</span></div>
+      <div class="line">│       └── <span class="file">page.tsx</span> <span class="comment">← aboutページ（/about）← フォルダ名がURLになる！</span></div>
+      <div class="line">├── <span class="folder">public/</span> <span class="comment">← 画像・ロゴ等の静的ファイル置き場</span></div>
+      <div class="line">├── <span class="folder">components/</span> <span class="comment">← ボタンやカードなど再利用する部品</span></div>
+      <div class="line">└── <span class="file">package.json</span> <span class="comment">← 使っている道具のリスト（設定ファイル）</span></div>
+    </div>
+  </div>
+
+  <!-- STEP5: 全体の流れ図 -->
+  <div class="card">
+    <div class="section-title"><span class="icon">🔁</span>Next.jsアプリ全体の流れ</div>
+    <div class="flow-svg-wrap">
+      <svg viewBox="0 0 760 300" width="100%" style="min-width:320px; display:block;">
+        <!-- ユーザー -->
+        <rect x="10" y="110" width="110" height="80" rx="12" fill="#e8f5e9" stroke="#4caf50" stroke-width="2"/>
+        <text x="65" y="143" text-anchor="middle" font-size="22">👤</text>
+        <text x="65" y="163" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b5e20">ユーザー</text>
+        <text x="65" y="179" text-anchor="middle" font-size="10" fill="#388e3c">ブラウザで</text>
+        <text x="65" y="191" text-anchor="middle" font-size="10" fill="#388e3c">URLを入力</text>
+
+        <!-- 矢印1 -->
+        <line x1="120" y1="150" x2="165" y2="150" stroke="#999" stroke-width="2" marker-end="url(#arr)"/>
+        <text x="143" y="143" text-anchor="middle" font-size="10" fill="#888">リクエスト</text>
+
+        <!-- Next.jsサーバー -->
+        <rect x="165" y="60" width="160" height="180" rx="12" fill="#1a1a2e" stroke="#444" stroke-width="2"/>
+        <text x="245" y="90" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">▲ Next.js</text>
+        <text x="245" y="107" text-anchor="middle" font-size="11" fill="#aaa">サーバー</text>
+        <rect x="180" y="115" width="130" height="30" rx="6" fill="#263238"/>
+        <text x="245" y="135" text-anchor="middle" font-size="11" fill="#90caf9">ページのレンダリング</text>
+        <rect x="180" y="152" width="130" height="30" rx="6" fill="#263238"/>
+        <text x="245" y="172" text-anchor="middle" font-size="11" fill="#a5d6a7">APIルート（データ処理）</text>
+        <rect x="180" y="189" width="130" height="30" rx="6" fill="#263238"/>
+        <text x="245" y="209" text-anchor="middle" font-size="11" fill="#ffcc80">キャッシュ管理</text>
+
+        <!-- 矢印2 -->
+        <line x1="325" y1="130" x2="370" y2="130" stroke="#999" stroke-width="2" marker-end="url(#arr)"/>
+        <text x="348" y="123" text-anchor="middle" font-size="10" fill="#888">データ取得</text>
+
+        <!-- データベース -->
+        <rect x="370" y="90" width="120" height="80" rx="12" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+        <text x="430" y="123" text-anchor="middle" font-size="22">🗄</text>
+        <text x="430" y="148" text-anchor
