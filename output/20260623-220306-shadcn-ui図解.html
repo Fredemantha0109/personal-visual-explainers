@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>shadcn/ui 図解</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0f1117;
+    color: #e2e8f0;
+    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+    padding: 20px 16px 40px;
+    max-width: 430px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 4px;
+    letter-spacing: 0.02em;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 20px;
+  }
+
+  /* ---- Section titles ---- */
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 24px 0 10px;
+    padding-left: 8px;
+    border-left: 3px solid #6366f1;
+  }
+
+  /* ---- Concept card ---- */
+  .concept-card {
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .concept-card h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #a5b4fc;
+    margin-bottom: 6px;
+  }
+  .concept-card p {
+    font-size: 12px;
+    color: #94a3b8;
+    line-height: 1.6;
+  }
+
+  /* ---- Comparison table ---- */
+  .compare-wrap {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .compare-col {
+    flex: 1;
+    border-radius: 10px;
+    padding: 12px 10px;
+  }
+  .compare-col.bad {
+    background: #1f1520;
+    border: 1px solid #7f1d1d;
+  }
+  .compare-col.good {
+    background: #0f1f1a;
+    border: 1px solid #14532d;
+  }
+  .compare-col .col-title {
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  .compare-col.bad .col-title { color: #f87171; }
+  .compare-col.good .col-title { color: #4ade80; }
+  .compare-col ul {
+    list-style: none;
+    padding: 0;
+  }
+  .compare-col ul li {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-bottom: 5px;
+    padding-left: 14px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .compare-col.bad ul li::before { content: '✕'; position: absolute; left: 0; color: #f87171; font-size: 10px; top: 1px; }
+  .compare-col.good ul li::before { content: '✓'; position: absolute; left: 0; color: #4ade80; font-size: 10px; top: 1px; }
+
+  /* ---- Architecture diagram ---- */
+  .arch-wrap {
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  /* ---- Flow steps ---- */
+  .flow-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 12px;
+  }
+  .flow-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    position: relative;
+  }
+  .flow-step-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 32px;
+  }
+  .step-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #6366f1;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+  .step-line {
+    width: 2px;
+    flex: 1;
+    min-height: 24px;
+    background: #2d3148;
+    margin-top: 0;
+  }
+  .flow-step:last-child .step-line {
+    display: none;
+  }
+  .flow-step-content {
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    flex: 1;
+  }
+  .flow-step-content h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 3px;
+  }
+  .flow-step-content p {
+    font-size: 11px;
+    color: #64748b;
+    line-height: 1.5;
+  }
+  .flow-step-content code {
+    display: inline-block;
+    background: #0f1117;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    font-size: 10px;
+    color: #a5b4fc;
+    padding: 2px 6px;
+    margin-top: 4px;
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+  }
+
+  /* ---- Component chips ---- */
+  .chip-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .chip {
+    background: #1e2130;
+    border: 1px solid #334155;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11px;
+    color: #94a3b8;
+  }
+
+  /* ---- Stack diagram ---- */
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .stack-item {
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+  }
+  .stack-layer-1 { background: #312e81; color: #c7d2fe; border: 1px solid #4338ca; }
+  .stack-layer-2 { background: #1e3a5f; color: #93c5fd; border: 1px solid #1d4ed8; }
+  .stack-layer-3 { background: #1a3a2a; color: #86efac; border: 1px solid #16a34a; }
+  .stack-layer-4 { background: #1f2937; color: #d1d5db; border: 1px solid #374151; }
+  .stack-label {
+    font-size: 10px;
+    color: #475569;
+    text-align: right;
+    margin-bottom: 2px;
+  }
+
+  .arrow-down {
+    text-align: center;
+    color: #475569;
+    font-size: 16px;
+    margin: 2px 0;
+  }
+
+  /* ---- Highlight box ---- */
+  .highlight-box {
+    background: linear-gradient(135deg, #1e1b4b, #12172e);
+    border: 1px solid #4338ca;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+  .highlight-box .tag {
+    display: inline-block;
+    background: #6366f1;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+  }
+  .highlight-box p {
+    font-size: 12px;
+    color: #c7d2fe;
+    line-height: 1.7;
+  }
+</style>
+</head>
+<body>
+
+<h1>shadcn/ui</h1>
+<p class="subtitle">コピー&ペーストで使う新世代UIライブラリ</p>
+
+<!-- ポイント -->
+<div class="section-title">💡 そもそも何が違うのか</div>
+<div class="compare-wrap">
+  <div class="compare-col bad">
+    <div class="col-title">従来のUIライブラリ</div>
+    <ul>
+      <li>npm installして使う</li>
+      <li>スタイルを上書き困難</li>
+      <li>ライブラリに依存し続ける</li>
+      <li>バージョン管理が必要</li>
+    </ul>
+  </div>
+  <div class="compare-col good">
+    <div class="col-title">shadcn/ui</div>
+    <ul>
+      <li>コードをコピーして使う</li>
+      <li>完全にカスタマイズ可</li>
+      <li>自分のコードになる</li>
+      <li>依存関係が最小限</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 核心思想 -->
+<div class="highlight-box">
+  <span class="tag">CORE CONCEPT</span>
+  <p>shadcn/uiは「ライブラリ」ではなく<strong style="color:#fff">コンポーネント集</strong>。<br>
+  CLIでソースコードをプロジェクトに直接コピーし、<br>
+  <strong style="color:#fff">完全に所有・編集できる</strong>設計思想が特徴。</p>
+</div>
+
+<!-- 技術スタック -->
+<div class="section-title">🏗 技術スタック構造</div>
+<div class="arch-wrap">
+  <div class="stack-label">あなたのアプリ層</div>
+  <div class="stack">
+    <div class="stack-item stack-layer-1">shadcn/ui コンポーネント（あなたのコード）</div>
+    <div class="arrow-down">↑ コピーして配置</div>
+    <div class="stack-item stack-layer-2">Radix UI（アクセシビリティ・動作ロジック）</div>
+    <div class="arrow-down">↑ 土台として利用</div>
+    <div class="stack-item stack-layer-3">Tailwind CSS（スタイリング）</div>
+    <div class="arrow-down">↑ クラス付与</div>
+    <div class="stack-item stack-layer-4">React / Next.js（フレームワーク）</div>
+  </div>
+</div>
+
+<!-- 使い方フロー -->
+<div class="section-title">🚀 使い方の流れ</div>
+<div class="flow-steps">
+  <div class="flow-step">
+    <div class="flow-step-left">
+      <div class="step-num">1</div>
+      <div class="step-line"></div>
+    </div>
+    <div class="flow-step-content">
+      <h4>プロジェクト初期化</h4>
+      <p>Next.js + Tailwind環境にCLIを実行</p>
+      <code>npx shadcn@latest init</code>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-step-left">
+      <div class="step-num">2</div>
+      <div class="step-line"></div>
+    </div>
+    <div class="flow-step-content">
+      <h4>必要なコンポーネントを追加</h4>
+      <p>CLIが src/components/ui/ にコードを生成</p>
+      <code>npx shadcn@latest add button</code>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-step-left">
+      <div class="step-num">3</div>
+      <div class="step-line"></div>
+    </div>
+    <div class="flow-step-content">
+      <h4>コードを直接カスタマイズ</h4>
+      <p>生成されたファイルを自由に編集・拡張可能</p>
+      <code>components/ui/button.tsx を編集</code>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-step-left">
+      <div class="step-num">4</div>
+      <div class="step-line"></div>
+    </div>
+    <div class="flow-step-content">
+      <h4>インポートして使用</h4>
+      <p>通常のコンポーネントとして import するだけ</p>
+      <code>import &#123; Button &#125; from "@/components/ui/button"</code>
+    </div>
+  </div>
+</div>
+
+<!-- 主なコンポーネント -->
+<div class="section-title">🧩 主なコンポーネント</div>
+<div class="chip-wrap">
+  <div class="chip">Button</div>
+  <div class="chip">Dialog</div>
+  <div class="chip">Dropdown Menu</div>
+  <div class="chip">Form</div>
+  <div class="chip">Table</div>
+  <div class="chip">Toast</div>
+  <div class="chip">Tabs</div>
+  <div class="chip">Card</div>
+  <div class="chip">Input</div>
+  <div class="chip">Select</div>
+  <div class="chip">Checkbox</div>
+  <div class="chip">Avatar</div>
+  <div class="chip">Badge</div>
+  <div class="chip">Calendar</div>
+  <div class="chip">Skeleton</div>
+  <div class="chip">Sheet</div>
+  <div class="chip">Command</div>
+  <div class="chip">Tooltip</div>
+</div>
+
+<!-- 向いている用途 -->
+<div class="section-title">🎯 向いているケース</div>
+<div class="concept-card">
+  <h3>✅ こんなプロジェクトに最適</h3>
+  <p>
+    ・Next.js / Vite + React 環境<br>
+    ・デザインを細かくコントロールしたい<br>
+    ・アクセシビリティを確保したい<br>
+    ・長期的に保守するプロダクト<br>
+    ・独自デザインシステムを構築したい
+  </p>
+</div>
+<div class="concept-card">
+  <h3>⚠️ 注意点</h3>
+  <p>
+    ・Tailwind CSS の知識が前提となる<br>
+    ・Vue・Svelte等Reactの外は基本非対応<br>
+    ・コンポーネント更新は手動での対応が必要<br>
+    ・大量のコードがプロジェクト内に入る
+  </p>
+</div>
+
+</body>
+</html>
