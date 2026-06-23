@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vercelとは何か</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0a0a0f;
+    color: #e8e8f0;
+    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+    padding: 20px 16px 40px;
+    max-width: 430px;
+    margin: 0 auto;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  h1 {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: #ffffff;
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 24px;
+  }
+  /* ---- Section titles ---- */
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #7878ff;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    border-left: 3px solid #7878ff;
+    padding-left: 8px;
+  }
+  /* ---- What box ---- */
+  .what-box {
+    background: #13131e;
+    border: 1px solid #2a2a40;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .what-icon {
+    flex-shrink: 0;
+  }
+  .what-text .label {
+    font-size: 17px;
+    font-weight: 800;
+    color: #fff;
+  }
+  .what-text .desc {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 4px;
+  }
+  /* ---- Flow diagram ---- */
+  .flow-container {
+    background: #13131e;
+    border: 1px solid #2a2a40;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .flow-box {
+    flex: 1;
+    background: #1e1e30;
+    border-radius: 8px;
+    padding: 8px 6px;
+    text-align: center;
+    border: 1px solid #3a3a55;
+  }
+  .flow-box .icon { font-size: 18px; }
+  .flow-box .name { font-size: 11px; font-weight: 700; color: #ddd; margin-top: 3px; }
+  .flow-box .note { font-size: 10px; color: #888; }
+  .flow-arrow {
+    font-size: 18px;
+    color: #7878ff;
+    flex-shrink: 0;
+  }
+  .flow-label {
+    text-align: center;
+    font-size: 11px;
+    color: #7878ff;
+    font-weight: 700;
+    margin: 10px 0 4px;
+    letter-spacing: 0.05em;
+  }
+  .flow-highlight {
+    background: #1a1a35;
+    border: 1.5px solid #7878ff;
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .flow-highlight .big-icon { font-size: 28px; flex-shrink: 0; }
+  .flow-highlight .hl-text .name { font-size: 14px; font-weight: 800; color: #fff; }
+  .flow-highlight .hl-text .note { font-size: 11px; color: #aaa; margin-top: 2px; }
+
+  /* ---- Feature cards ---- */
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .feat-card {
+    background: #13131e;
+    border: 1px solid #2a2a40;
+    border-radius: 10px;
+    padding: 12px 10px;
+  }
+  .feat-icon { font-size: 22px; margin-bottom: 6px; }
+  .feat-name { font-size: 12px; font-weight: 700; color: #fff; }
+  .feat-desc { font-size: 11px; color: #888; margin-top: 3px; line-height: 1.4; }
+
+  /* ---- Comparison ---- */
+  .compare-box {
+    background: #13131e;
+    border: 1px solid #2a2a40;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .compare-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .compare-row:last-child { margin-bottom: 0; }
+  .compare-left {
+    background: #1e2010;
+    border: 1px solid #3a3a22;
+    border-radius: 8px;
+    padding: 7px 8px;
+    text-align: center;
+    font-size: 11px;
+    color: #bbb;
+  }
+  .compare-right {
+    background: #101020;
+    border: 1px solid #3a3a55;
+    border-radius: 8px;
+    padding: 7px 8px;
+    text-align: center;
+    font-size: 11px;
+    color: #aae;
+    font-weight: 600;
+  }
+  .compare-vs {
+    font-size: 10px;
+    color: #666;
+    text-align: center;
+    font-weight: 700;
+  }
+  .compare-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .col-label {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #888;
+  }
+
+  /* ---- Ecosystem ---- */
+  .eco-box {
+    background: #13131e;
+    border: 1px solid #2a2a40;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .eco-center {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    background: #1a1a35;
+    border: 2px solid #7878ff;
+    border-radius: 50%;
+    width: 72px;
+    height: 72px;
+    line-height: 72px;
+    margin: 0 auto 14px;
+  }
+  .eco-items {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    text-align: center;
+  }
+  .eco-item {
+    background: #1e1e30;
+    border-radius: 8px;
+    padding: 8px 4px;
+    font-size: 11px;
+    color: #ccc;
+    border: 1px solid #2a2a40;
+  }
+  .eco-item .ei { font-size: 16px; margin-bottom: 3px; }
+
+  /* ---- Use case pills ---- */
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .pill {
+    background: #1a1a30;
+    border: 1px solid #4040aa;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: #aaaaff;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<h1>▲ Vercel とは</h1>
+<p class="subtitle">フロントエンド開発者のためのクラウドプラットフォーム</p>
+
+<!-- What is Vercel -->
+<div class="section-title">概要</div>
+<div class="what-box">
+  <div class="what-icon">
+    <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+      <rect width="52" height="52" rx="12" fill="#1a1a35"/>
+      <polygon points="26,12 42,38 10,38" fill="#ffffff"/>
+    </svg>
+  </div>
+  <div class="what-text">
+    <div class="label">フロントエンド特化の<br>ホスティング &amp; CI/CD</div>
+    <div class="desc">GitにPushするだけで<br>世界中に自動デプロイ</div>
+  </div>
+</div>
+
+<!-- Flow: Push → Deploy -->
+<div class="section-title">仕組み：デプロイの流れ</div>
+<div class="flow-container">
+  <div class="flow-row">
+    <div class="flow-box">
+      <div class="icon">💻</div>
+      <div class="name">ローカル開発</div>
+      <div class="note">コードを書く</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">
+      <div class="icon">🐙</div>
+      <div class="name">Git Push</div>
+      <div class="note">GitHub等へ</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="border-color:#7878ff; background:#1a1a35;">
+      <div class="icon">▲</div>
+      <div class="name" style="color:#aaf;">Vercel</div>
+      <div class="note">自動検知</div>
+    </div>
+  </div>
+  <div class="flow-label">▼ Vercelが自動でやること</div>
+  <div class="flow-row" style="margin-bottom:8px;">
+    <div class="flow-box">
+      <div class="icon">🔨</div>
+      <div class="name">ビルド</div>
+      <div class="note">自動実行</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">
+      <div class="icon">🌐</div>
+      <div class="name">CDN配信</div>
+      <div class="note">世界に展開</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">
+      <div class="icon">🔗</div>
+      <div class="name">URL発行</div>
+      <div class="note">即アクセス可</div>
+    </div>
+  </div>
+  <div class="flow-highlight">
+    <div class="big-icon">⚡</div>
+    <div class="hl-text">
+      <div class="name">数十秒でデプロイ完了</div>
+      <div class="note">PRごとにプレビューURLも自動生成</div>
+    </div>
+  </div>
+</div>
+
+<!-- Features -->
+<div class="section-title">主な機能・特徴</div>
+<div class="features-grid">
+  <div class="feat-card">
+    <div class="feat-icon">🔀</div>
+    <div class="feat-name">プレビュー環境</div>
+    <div class="feat-desc">PRを出すたびに専用URLが生成され、レビューが簡単</div>
+  </div>
+  <div class="feat-card">
+    <div class="feat-icon">🌍</div>
+    <div class="feat-name">Edge Network</div>
+    <div class="feat-desc">世界中のCDNで高速配信。遅延を最小化</div>
+  </div>
+  <div class="feat-card">
+    <div class="feat-icon">⚙️</div>
+    <div class="feat-name">サーバーレス関数</div>
+    <div class="feat-desc">バックエンドAPIもVercel上で動かせる</div>
+  </div>
+  <div class="feat-card">
+    <div class="feat-icon">📊</div>
+    <div class="feat-name">アナリティクス</div>
+    <div class="feat-desc">Core Web Vitalsなどパフォーマンスを可視化</div>
+  </div>
+  <div class="feat-card">
+    <div class="feat-icon">🔒</div>
+    <div class="feat-name">HTTPS自動設定</div>
+    <div class="feat-desc">SSL証明書を自動発行・更新</div>
+  </div>
+  <div class="feat-card">
+    <div class="feat-icon">↩️</div>
+    <div class="feat-name">即時ロールバック</div>
+    <div class="feat-desc">問題が起きたら以前のバージョンにすぐ戻せる</div>
+  </div>
+</div>
+
+<!-- Comparison -->
+<div class="section-title">従来 vs Vercel</div>
+<div class="compare-box">
+  <div class="compare-header">
+    <div class="col-label">従来の方法</div>
+    <div></div>
+    <div class="col-label">Vercel</div>
+  </div>
+  <div class="compare-row">
+    <div class="compare-left">サーバー構築・管理が必要</div>
+    <div class="compare-vs">→</div>
+    <div class="compare-right">サーバーレス・管理不要</div>
+  </div>
+  <div class="compare-row">
+    <div class="compare-left">手動でビルド・アップロード</div>
+    <div class="compare-vs">→</div>
+    <div class="compare-right">Push で全自動デプロイ</div>
+  </div>
+  <div class="compare-row">
+    <div class="compare-left">本番のみ確認可能</div>
+    <div class="compare-vs">→</div>
+    <div class="compare-right">PRごとにプレビューURL</div>
+  </div>
+  <div class="compare-row">
+    <div class="compare-left">SSL設定が煩雑</div>
+    <div class="compare-vs">→</div>
+    <div class="compare-right">HTTPS が自動で有効</div>
+  </div>
+</div>
+
+<!-- Ecosystem -->
+<div class="section-title">対応フレームワーク</div>
+<div class="eco-box">
+  <div class="eco-center">▲<br>Vercel</div>
+  <div class="eco-items">
+    <div class="eco-item"><div class="ei">⚛️</div>Next.js<br><span style="font-size:9px;color:#7878ff;">開発元</span></div>
+    <div class="eco-item"><div class="ei">🟢</div>Nuxt<br><span style="font-size:9px;color:#666;">Vue</span></div>
+    <div class="eco-item"><div class="ei">🟠</div>Remix<br><span style="font-size:9px;color:#666;">React</span></div>
+    <div class="eco-item"><div class="ei">⚡</div>Vite<br><span style="font-size:9px;color:#666;">汎用</span></div>
+    <div class="eco-item"><div class="ei">🔵</div>SvelteKit<br><span style="font-size:9px;color:#666;">Svelte</span></div>
+    <div class="eco-item"><div class="ei">📄</div>その他多数<br><span style="font-size:9px;color:#666;">静的サイト等</span></div>
+  </div>
+</div>
+
+<!-- Use cases -->
+<div class="section-title">向いているユースケース</div>
+<div style="background:#13131e; border:1px solid #2a2a40; border-radius:12px; padding:14px; margin-bottom:8px;">
+  <div class="pill-row">
+    <div class="pill">🛍 ECサイト</div>
+    <div class="pill">📝 ブログ・CMS</div>
+    <div class="pill">🚀 スタートアップMVP</div>
+    <div class="pill">📱 Webアプリ</div>
+    <div class="pill">🎨 ポートフォリオ</div>
+    <div class="pill">📊 ダッシュボード</div>
+  </div>
+</div>
+
+<div style="text-align:center; font-size:11px; color:#555; margin-top:16px;">
+  無料プランあり。個人〜企業まで幅広く対応
+</div>
+
+</body>
+</html>
