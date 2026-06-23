@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Next.js 図解</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+    padding: 16px;
+    min-height: 100vh;
+  }
+  h1 {
+    text-align: center;
+    font-size: 1.3rem;
+    color: #58a6ff;
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 0.72rem;
+    color: #8b949e;
+    margin-bottom: 18px;
+  }
+  .section-title {
+    font-size: 0.72rem;
+    font-weight: bold;
+    color: #8b949e;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+    margin-top: 20px;
+  }
+
+  /* ── What is Next.js ── */
+  .what-box {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .what-icon {
+    flex-shrink: 0;
+  }
+  .what-text h2 {
+    font-size: 1rem;
+    color: #f0f6fc;
+    margin-bottom: 4px;
+  }
+  .what-text p {
+    font-size: 0.78rem;
+    color: #8b949e;
+    line-height: 1.5;
+  }
+
+  /* ── Rendering Methods ── */
+  .render-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .render-card {
+    background: #161b22;
+    border-radius: 10px;
+    padding: 12px;
+    border-left: 3px solid;
+  }
+  .render-card.ssg  { border-color: #3fb950; }
+  .render-card.ssr  { border-color: #58a6ff; }
+  .render-card.isr  { border-color: #d29922; }
+  .render-card.csr  { border-color: #bc8cff; }
+  .render-card .tag {
+    font-size: 0.65rem;
+    font-weight: bold;
+    padding: 2px 7px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 5px;
+  }
+  .ssg .tag  { background: #1a3a22; color: #3fb950; }
+  .ssr .tag  { background: #1a2d4a; color: #58a6ff; }
+  .isr .tag  { background: #3a2d10; color: #d29922; }
+  .csr .tag  { background: #2d1f4a; color: #bc8cff; }
+  .render-card h3 { font-size: 0.82rem; color: #f0f6fc; margin-bottom: 3px; }
+  .render-card p  { font-size: 0.7rem; color: #8b949e; line-height: 1.45; }
+  .render-card .timing {
+    font-size: 0.65rem;
+    color: #6e7681;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* ── Architecture Flow ── */
+  .flow-wrap {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 14px;
+    overflow-x: hidden;
+  }
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    justify-content: center;
+    flex-wrap: nowrap;
+  }
+  .flow-node {
+    background: #21262d;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 8px 10px;
+    text-align: center;
+    flex: 1;
+    min-width: 0;
+  }
+  .flow-node .icon { font-size: 1.2rem; }
+  .flow-node .label {
+    font-size: 0.65rem;
+    color: #c9d1d9;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .flow-arrow {
+    color: #30363d;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    padding: 0 2px;
+  }
+  .flow-note {
+    text-align: center;
+    font-size: 0.68rem;
+    color: #6e7681;
+    margin-top: 10px;
+  }
+  /* server / client split */
+  .split-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .split-card {
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+  }
+  .split-card.server { background: #1a2d4a; border: 1px solid #1f3d6e; }
+  .split-card.client { background: #2d1f4a; border: 1px solid #4a2f6e; }
+  .split-card .sc-label {
+    font-size: 0.65rem;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  .server .sc-label { color: #58a6ff; }
+  .client .sc-label { color: #bc8cff; }
+  .split-card ul {
+    list-style: none;
+    font-size: 0.68rem;
+    color: #8b949e;
+    text-align: left;
+    line-height: 1.6;
+  }
+
+  /* ── Routing ── */
+  .routing-box {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .route-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #21262d;
+  }
+  .route-item:last-child { border-bottom: none; }
+  .route-code {
+    background: #21262d;
+    border-radius: 5px;
+    padding: 3px 8px;
+    font-size: 0.7rem;
+    font-family: monospace;
+    color: #e6edf3;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 130px;
+  }
+  .route-desc {
+    font-size: 0.72rem;
+    color: #8b949e;
+    line-height: 1.4;
+  }
+
+  /* ── Key Features ── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .feat-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .feat-icon { font-size: 1.3rem; }
+  .feat-name { font-size: 0.8rem; font-weight: bold; color: #f0f6fc; }
+  .feat-desc { font-size: 0.68rem; color: #8b949e; line-height: 1.4; }
+
+  /* footer */
+  .footer {
+    text-align: center;
+    font-size: 0.65rem;
+    color: #6e7681;
+    margin-top: 24px;
+    padding-bottom: 8px;
+  }
+</style>
+</head>
+<body>
+
+<h1>⚡ Next.js 図解</h1>
+<p class="subtitle">Reactベースのフルスタックフレームワーク</p>
+
+<!-- What is Next.js -->
+<div class="section-title">🔍 Next.js とは</div>
+<div class="what-box">
+  <div class="what-icon">
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+      <rect width="48" height="48" rx="10" fill="#21262d"/>
+      <circle cx="24" cy="24" r="16" fill="#fff"/>
+      <path d="M18 32V16l16 20H18z" fill="#0d1117"/>
+      <path d="M30 16v16" stroke="#0d1117" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="what-text">
+    <h2>React + サーバー機能</h2>
+    <p>Vercel製のReactフレームワーク。<br>SSR・SSG・APIルートを標準搭載し、<br>フロントからバックまで一元管理できる。</p>
+  </div>
+</div>
+
+<!-- Rendering Methods -->
+<div class="section-title">🖥 レンダリング方式</div>
+<div class="render-grid">
+  <div class="render-card ssg">
+    <span class="tag">SSG</span>
+    <h3>静的生成</h3>
+    <p>ビルド時にHTMLを生成。高速配信に最適。</p>
+    <div class="timing">⏱ ビルド時</div>
+  </div>
+  <div class="render-card ssr">
+    <span class="tag">SSR</span>
+    <h3>サーバー描画</h3>
+    <p>リクエストごとにサーバーでHTML生成。</p>
+    <div class="timing">⏱ リクエスト時</div>
+  </div>
+  <div class="render-card isr">
+    <span class="tag">ISR</span>
+    <h3>増分再生成</h3>
+    <p>一定間隔でページを再生成。SSGとSSRの中間。</p>
+    <div class="timing">⏱ 定期更新</div>
+  </div>
+  <div class="render-card csr">
+    <span class="tag">CSR</span>
+    <h3>クライアント描画</h3>
+    <p>ブラウザ側でReactが動作する従来方式。</p>
+    <div class="timing">⏱ ブラウザ上</div>
+  </div>
+</div>
+
+<!-- Architecture Flow -->
+<div class="section-title">🏗 アーキテクチャフロー</div>
+<div class="flow-wrap">
+  <div class="flow-row">
+    <div class="flow-node">
+      <div class="icon">🌐</div>
+      <div class="label">ブラウザ</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="icon">⚙️</div>
+      <div class="label">Next.js<br>Server</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="icon">🗄️</div>
+      <div class="label">DB / API</div>
+    </div>
+  </div>
+  <div class="flow-note">↑ App RouterによるServer / Client Components分担</div>
+  <div class="split-row">
+    <div class="split-card server">
+      <div class="sc-label">🖥 Server Component</div>
+      <ul>
+        <li>✓ データ取得</li>
+        <li>✓ SEO対策</li>
+        <li>✓ 秘密鍵安全管理</li>
+        <li>✗ useStateなし</li>
+      </ul>
+    </div>
+    <div class="split-card client">
+      <div class="sc-label">💻 Client Component</div>
+      <ul>
+        <li>✓ インタラクション</li>
+        <li>✓ useState/useEffect</li>
+        <li>✓ イベント処理</li>
+        <li>"use client" 宣言</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Routing -->
+<div class="section-title">📁 App Routerのファイル構成</div>
+<div class="routing-box">
+  <div class="route-item">
+    <div class="route-code">app/page.tsx</div>
+    <div class="route-desc">トップページ <code style="color:#58a6ff">/</code></div>
+  </div>
+  <div class="route-item">
+    <div class="route-code">app/about/page.tsx</div>
+    <div class="route-desc">固定ページ <code style="color:#58a6ff">/about</code></div>
+  </div>
+  <div class="route-item">
+    <div class="route-code">app/blog/[id]/page.tsx</div>
+    <div class="route-desc">動的ルート <code style="color:#58a6ff">/blog/123</code></div>
+  </div>
+  <div class="route-item">
+    <div class="route-code">app/api/route.ts</div>
+    <div class="route-desc">APIエンドポイント</div>
+  </div>
+  <div class="route-item">
+    <div class="route-code">app/layout.tsx</div>
+    <div class="route-desc">共通レイアウト(全ページ共有)</div>
+  </div>
+</div>
+
+<!-- Key Features -->
+<div class="section-title">✨ 主な機能</div>
+<div class="features-grid">
+  <div class="feat-card">
+    <div class="feat-icon">📦</div>
+    <div class="feat-name">自動最適化</div>
+    <div class="feat-desc">画像・フォント・スクリプトを自動で最適化して速度向上</div>
+  </div>
+  <div class="feat-card">
+    <div class="feat-icon">🔌</div>
+    <div class="feat-name">APIルート</div>
+    <div class="feat-desc">バックエンドAPIを同じプロジェクト内に作成できる</div>
+  </div>
+  <div class="feat-card">
+    <div class="feat-icon">🔒</div>
+    <div class="feat-name">Middleware</div>
+    <div class="feat-desc">認証・リダイレクト処理をエッジで実行</div>
+  </div>
+  <div class="feat-card">
+    <div class="feat-icon">🚀</div>
+    <div class="feat-name">Edge Runtime</div>
+    <div class="feat-desc">世界中のCDNエッジで関数を超高速実行</div>
+  </div>
+</div>
+
+<!-- Summary SVG -->
+<div class="section-title">📊 使いどころの選び方</div>
+<div style="background:#161b22;border:1px solid #30363d;border-radius:12px;padding:14px;">
+  <svg width="100%" viewBox="0 0 320 130" xmlns="http://www.w3.org/2000/svg">
+    <!-- axis -->
+    <line x1="30" y1="110" x2="310" y2="110" stroke="#30363d" stroke-width="1.5"/>
+    <line x1="30" y1="110" x2="30"  y2="10"  stroke="#30363d" stroke-width="1.5"/>
+    <!-- axis labels -->
+    <text x="165" y="126" text-anchor="middle" fill="#6e7681" font-size="9">データの更新頻度 →</text>
+    <text x="14" y="60" text-anchor="middle" fill="#6e7681" font-size="9" transform="rotate(-90,14,60)">速度重視 →</text>
+    <!-- SSG -->
+    <rect x="40"  y="18" width="60" height="28" rx="5" fill="#1a3a22" stroke="#3fb950" stroke-width="1.2"/>
+    <text x="70" y="30" text-anchor="middle" fill="#3fb950" font-size="9" font-weight="bold">SSG</text>
+    <text x="70" y="41" text-anchor="middle" fill="#8b949e" font-size="7.5">低頻度・高速</text>
+    <!-- ISR -->
+    <rect x="125" y="38" width="60" height="28" rx="5" fill="#3a2d10" stroke="#d29922" stroke-width="1.2"/>
+    <text x="155" y="50" text-anchor="middle" fill="#d29922" font-size="9" font-weight="bold">ISR</text>
+    <text x="155" y="61" text-anchor="middle" fill="#8b949e" font-size="7.5">定期更新</text>
+    <!-- SSR -->
+    <rect x="215" y="58" width="60" height="28" rx="5" fill="#1a2d4a" stroke="#58a6ff" stroke-width="1.2"/>
+    <text x="245" y="70" text-anchor="middle" fill="#58a6ff" font-size="9" font-weight="bold">SSR</text>
+    <text x="245" y="81" text-anchor="middle" fill="#8b949e" font-size="7.5">高頻度・動的</text>
+    <!-- arrow guide -->
+    <path d="M 100 32 Q 125 35 125 52" fill="none" stroke="#30363d" stroke-width="1" stroke-dasharray="3,2"/>
+    <path d="M 185 52 Q 210 55 215 72" fill="none" stroke="#30363d" stroke-width="1" stroke-dasharray="3,2"/>
+  </svg>
+</div>
+
+<div class="footer">Next.js 14 App Router 基準 · Vercel製</div>
+
+</body>
+</html>
