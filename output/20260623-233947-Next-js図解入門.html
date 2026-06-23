@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Next.js図解入門</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+    background: #f0f4ff;
+    color: #1a1a2e;
+    min-height: 100vh;
+  }
+
+  .page-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: clamp(16px, 4vw, 48px) clamp(12px, 3vw, 40px);
+  }
+
+  /* ヘッダー */
+  .hero {
+    background: linear-gradient(135deg, #0070f3, #00c6ff);
+    border-radius: 20px;
+    padding: clamp(24px, 5vw, 48px);
+    text-align: center;
+    color: white;
+    margin-bottom: 32px;
+    box-shadow: 0 8px 32px rgba(0,112,243,0.25);
+  }
+  .hero h1 {
+    font-size: clamp(22px, 5vw, 40px);
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+  .hero p {
+    font-size: clamp(13px, 2.5vw, 17px);
+    opacity: 0.92;
+    line-height: 1.7;
+  }
+
+  /* セクションタイトル */
+  .section-title {
+    font-size: clamp(16px, 3vw, 22px);
+    font-weight: 800;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #0070f3;
+  }
+  .section-title .badge {
+    background: #0070f3;
+    color: white;
+    border-radius: 50%;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  /* カード */
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: clamp(16px, 3vw, 28px);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    margin-bottom: 24px;
+  }
+
+  /* 用語説明グリッド */
+  .terms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .term-card {
+    background: #f8fbff;
+    border: 2px solid #d0e4ff;
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .term-title {
+    font-size: clamp(13px, 2vw, 15px);
+    font-weight: 800;
+    color: #0070f3;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .term-title .icon {
+    font-size: 18px;
+  }
+  .term-en {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 6px;
+    font-style: italic;
+  }
+  .term-desc {
+    font-size: clamp(11px, 1.8vw, 13px);
+    color: #444;
+    line-height: 1.6;
+  }
+
+  /* 全体像フロー SVG wrapper */
+  .svg-wrapper {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  /* 3つのレンダリング比較 */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 12px;
+  }
+  .compare-card {
+    border-radius: 14px;
+    padding: 18px 14px;
+    text-align: center;
+    color: white;
+  }
+  .compare-card.ssg  { background: linear-gradient(135deg, #11998e, #38ef7d); color: #1a1a2e; }
+  .compare-card.ssr  { background: linear-gradient(135deg, #f7971e, #ffd200); color: #1a1a2e; }
+  .compare-card.csr  { background: linear-gradient(135deg, #8e44ad, #c0392b); }
+  .compare-card h3 {
+    font-size: clamp(14px, 2.5vw, 17px);
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .compare-card .sub {
+    font-size: 11px;
+    margin-bottom: 10px;
+    opacity: 0.8;
+  }
+  .compare-card p {
+    font-size: clamp(11px, 1.8vw, 13px);
+    line-height: 1.6;
+    text-align: left;
+  }
+  .compare-card .timing {
+    display: inline-block;
+    background: rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .compare-card.ssg .timing, .compare-card.ssr .timing { background: rgba(0,0,0,0.12); }
+
+  /* ファイルルーティング */
+  .routing-box {
+    background: #1a1a2e;
+    border-radius: 14px;
+    padding: 20px;
+    font-family: 'Courier New', monospace;
+    overflow-x: auto;
+  }
+  .routing-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #2a2a4e;
+    flex-wrap: wrap;
+  }
+  .routing-row:last-child { border-bottom: none; }
+  .file-path {
+    color: #79d4f1;
+    font-size: clamp(12px, 2vw, 14px);
+    min-width: 180px;
+  }
+  .arrow-r { color: #555; font-size: 18px; }
+  .url-path {
+    color: #a3e635;
+    font-size: clamp(12px, 2vw, 14px);
+  }
+  .route-note {
+    color: #888;
+    font-size: 11px;
+    margin-left: 4px;
+  }
+
+  /* メリット */
+  .merit-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-top: 12px;
+  }
+  .merit-item {
+    background: #f0fff8;
+    border: 2px solid #b2f0d4;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .merit-icon { font-size: 24px; }
+  .merit-title {
+    font-size: clamp(13px, 2vw, 15px);
+    font-weight: 800;
+    color: #059669;
+  }
+  .merit-desc {
+    font-size: clamp(11px, 1.8vw, 13px);
+    color: #444;
+    line-height: 1.6;
+  }
+
+  /* まとめバナー */
+  .summary-banner {
+    background: linear-gradient(135deg, #1a1a2e, #0070f3);
+    border-radius: 16px;
+    padding: clamp(20px, 4vw, 36px);
+    color: white;
+    text-align: center;
+  }
+  .summary-banner h2 {
+    font-size: clamp(16px, 3vw, 22px);
+    font-weight: 900;
+    margin-bottom: 14px;
+  }
+  .summary-banner p {
+    font-size: clamp(12px, 2vw, 15px);
+    line-height: 1.8;
+    opacity: 0.9;
+  }
+
+  /* 全体像 SVG */
+  .flow-svg-wrap { width: 100%; overflow-x: auto; }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- ヘッダー -->
+  <div class="hero">
+    <h1>⚡ Next.js とは何か？</h1>
+    <p>Reactをベースにしたウェブアプリ開発フレームワーク。<br>「速い・作りやすい・SEOに強い」を一気に実現できる道具です。</p>
+  </div>
+
+  <!-- 0. そもそもの前提知識 -->
+  <div class="section-title"><span class="badge">0</span>まず知っておくべき登場人物</div>
+  <div class="terms-grid">
+    <div class="term-card">
+      <div class="term-title"><span class="icon">🌐</span>ブラウザ</div>
+      <div class="term-en">Browser</div>
+      <div class="term-desc">ChromeやSafariのこと。ユーザーが使うソフトで、ウェブページを表示する役割。</div>
+    </div>
+    <div class="term-card">
+      <div class="term-title"><span class="icon">🖥️</span>サーバー</div>
+      <div class="term-en">Server</div>
+      <div class="term-desc">インターネット上でページやデータを送り出すコンピューター。レストランでいう「厨房」。</div>
+    </div>
+    <div class="term-card">
+      <div class="term-title"><span class="icon">🧩</span>React</div>
+      <div class="term-en">React</div>
+      <div class="term-desc">Meta社製のUI部品作成ライブラリ。ボタンや入力欄などの「パーツ」を作る道具。Next.jsの土台。</div>
+    </div>
+    <div class="term-card">
+      <div class="term-title"><span class="icon">🏗️</span>フレームワーク</div>
+      <div class="term-en">Framework</div>
+      <div class="term-desc">家でいう「間取りが決まった設計図」。ゼロから作らなくても、型に沿って素早く開発できる仕組み。</div>
+    </div>
+    <div class="term-card">
+      <div class="term-title"><span class="icon">📄</span>HTML</div>
+      <div class="term-en">HTML</div>
+      <div class="term-desc">ウェブページの「骨格」。テキストや見出し、リンクなどの構造を書いた設計書のようなもの。</div>
+    </div>
+    <div class="term-card">
+      <div class="term-title"><span class="icon">🔍</span>SEO</div>
+      <div class="term-en">Search Engine Optimization</div>
+      <div class="term-desc">GoogleなどでページをUPしやすくする施策。検索結果の上位に表示されるほど人が来る。</div>
+    </div>
+  </div>
+
+  <!-- 1. 全体像 -->
+  <div class="section-title"><span class="badge">1</span>Next.js の全体像</div>
+  <div class="card">
+    <div class="flow-svg-wrap">
+      <svg viewBox="0 0 820 220" width="100%" style="min-width:320px; display:block;">
+        <!-- ユーザー -->
+        <rect x="10" y="70" width="120" height="80" rx="14" fill="#e0edff" stroke="#0070f3" stroke-width="2"/>
+        <text x="70" y="102" text-anchor="middle" font-size="28">👤</text>
+        <text x="70" y="122" text-anchor="middle" font-size="13" font-weight="bold" fill="#0070f3">ユーザー</text>
+        <text x="70" y="138" text-anchor="middle" font-size="11" fill="#555">(ブラウザで閲覧)</text>
+
+        <!-- 矢印1 -->
+        <line x1="132" y1="110" x2="188" y2="110" stroke="#0070f3" stroke-width="2.5" marker-end="url(#arr)"/>
+        <text x="160" y="103" text-anchor="middle" font-size="11" fill="#0070f3">①リクエスト</text>
+
+        <!-- Next.js サーバー -->
+        <rect x="190" y="30" width="200" height="160" rx="16" fill="#fff7e6" stroke="#f7971e" stroke-width="2.5"/>
+        <text x="290" y="58" text-anchor="middle" font-size="13" font-weight="900" fill="#f7971e">⚡ Next.js サーバー</text>
+        <text x="290" y="78" text-anchor="middle" font-size="11" fill="#888">(Webサイトを作る工場)</text>
+        <!-- 3つの処理 -->
+        <rect x="205" y="88" width="170" height="30" rx="8" fill="#ffe0b2"/>
+        <text x="290" y="108" text-anchor="middle" font-size="12" fill="#b35a00">🏗️ ページをHTMLに変換</text>
+        <rect x="205" y="124" width="170" height="30" rx="8" fill="#ffe0b2"/>
+        <text x="290" y="144" text-anchor="middle" font-size="12" fill="#b35a00">🔀 URLをページに振り分け</text>
+        <rect x="205" y="160" width="170" height="22" rx="8" fill="#ffe0b2"/>
+        <text x="290" y="175" text-anchor="middle" font-size="11" fill="#b35a00">⚡ 最適化・キャッシュ</text>
+
+        <!-- 矢印2 -->
+        <line x1="392" y1="110" x2="448" y2="110" stroke="#11998e" stroke-width="2.5" marker-end="url(#arr2)"/>
+        <text x="420" y="103" text-anchor="middle" font-size="11" fill="#11998e">②HTMLを返す</text>
+
+        <!-- ブラウザ表示 -->
+        <rect x="450" y="60" width="140" height="100" rx="14" fill="#e8fff5" stroke="#11998e" stroke-width="2"/>
+        <text x="520" y="88" text-anchor="middle" font-size="24">🖥️</text>
+        <text x="520" y="110" text-anchor="middle" font-size="13" font-weight="bold" fill="#059669">ページ表示</text>
+        <text x="520" y="128" text-anchor="middle" font-size="11" fill="#555">ブラウザに描画</text>
+        <text x="520" y="144" text-anchor="middle" font-size="11" fill="#555">される</text>
+
+        <!-- 矢印3 データ取得 -->
+        <line x1="620" y1="90" x2="676" y2="90" stroke="#8e44ad" stroke-width="2" stroke-dasharray="5,4" marker-end="url(#arr3)"/>
+        <text x="648" y="83" text-anchor="middle" font-size="10" fill="#8e44ad">データ取得</text>
+        <line x1="676" y1="130" x2="620" y2="130" stroke="#8e44ad" stroke-width="2" stroke-dasharray="5,4" marker-end="url(#arr3)"/>
+        <text x="648" y="147" text-anchor="middle" font-size="10" fill="#8e44ad">結果を渡す</text>
+
+        <!-- DB/API -->
+        <rect x="678" y="70" width="130" height="80" rx="14" fill="#f3e8ff" stroke="#8e44ad" stroke-width="2"/>
+        <text x="743" y="99" text-anchor="middle" font-size="22">🗄️</text>
+        <text x="743" y="118" text-anchor="middle" font-size="13" font-weight="bold" fill="#8e44ad">DB / API</text>
+        <text x="743" y="134" text-anchor="middle" font-size="11" fill="#555">外部データ源</text>
+
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#0070f3"/>
+          </marker>
+          <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#11998e"/>
+          </marker>
+          <marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#8e44ad"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+    <p style="font-size:13px; color:#555; margin-top:8px; line-height:1.7;">
+      ユーザーがURLにアクセス → Next.jsサーバーがページをHTMLに変換してブラウザへ送る。必要ならDBやAPIからデータを取ってくる。
+    </p>
+  </div>
+
+  <!-- 2. 3つのレンダリング方式 -->
+  <div class="section-title"><span class="badge">2</span>「いつHTMLを作るか」の3パターン</div>
+  <div class="card">
+    <p style="font-size:13px; color:#555; margin-bottom:14px; line-height:1.7;">
+      ⚠️ <strong>レンダリング</strong>とは「HTMLを作って画面に描く処理」のことです。「いつ・どこで」作るかで3種類に分かれます。
+    </p>
+    <div class="compare-grid">
+      <div class="compare-card ssg">
+        <div class="timing">🏗️ ビルド時に事前に作る</div>
+        <h3>SSG</h3>
+        <div class="sub">Static Site Generation（静的生成）</div>
+        <p>サイトを公開する前に全ページのHTMLを作り置き。リクエストが来たら即座に返すだけ。<br><br>
+        ✅ 最速・サーバー負荷ゼロ<br>
+        ❌ 内容を更新しにくい<br><br>
+        例）ブログ記事、製品説明ページ</p>
+      </div>
+      <div class="compare-card ssr">
+        <div class="timing">🔄 リクエストごとに毎回作る</div>
+        <h3>SSR</h3>
+        <div class="sub">Server Side Rendering（サーバー側で描画）</div>
+        <p>ユーザーがアクセスするたびにサーバーがHTMLを生成して送る。<br><br>
+        ✅ 常に最新データを表示<br>
+        ❌ サーバーへの負荷が高い<br><br>
+        例）ニュースサイト、ユーザー固有のページ</p>
+      </div>
+      <div class="compare-card csr">
+        <div class="timing">💻 ブラウザ側で動的に作る</div>
+        <h3>CSR</h3>
+        <div class="sub">Client Side Rendering（ブラウザ側で描画）</div>
+        <p>最初はほぼ空のHTMLを送り、JavaScriptでブラウザ上に描画。<br><br>
+        ✅ インタラクティブな操作が得意<br>
+        ❌ 初回表示が遅い・SEO弱い<br><br>
+        例）管理画面、リアルタイムチャット</p>
+      </div>
+    </div>
+
+    <!-- 比較タイムライン -->
+    <div style="margin-top:20px;">
+      <p style="font-size:12px; font-weight:800; color:#0070f3; margin-bottom:10px;">⏱ 速度イメージ比較</p>
+      <div class="flow-svg-wrap">
+        <svg viewBox="0 0 700 120" width="100%" style="min-width:280px;">
+          <!-- SSG -->
+          <text x="10" y="25" font-size="13" font-weight="bold" fill="#11998e">SSG</text>
+          <rect x="70" y="12" width="80" height="22" rx="6" fill="#a3e6ca"/>
+          <text x="110" y="27" text-anchor="middle" font-size="11" fill="#1a4a30">即座に表示</text>
+
+          <!-- SSR -->
+          <text x="10" y="65" font-size="13" font-weight="bold" fill="#b35a00">SSR</text>
+          <rect x="70" y="52" width="180" height="22" rx="6" fill="#ffd180"/>
+          <text x="160" y="67" text-anchor="middle" font-size="11" fill="#5a2e00">サーバー処理 → 表示</text>
+
+          <!-- CSR -->
+          <text x="10" y="105" font-size="13" font-weight="bold" fill="#c0392b">CSR</text>
+          <rect x="70" y="92" width="320" height="22" rx="6" fill="#e8b4b8"/>
+          <text x="230" y="107" text-anchor="middle" font-size="11" fill="#7b1c1c">JS読込 → データ取得 → 描画完了</text>
+
+          <!-- 軸 -->
+          <line x1="70" y1="115" x2="600" y2="115" stroke="#ccc" stroke-width="1.5"/>
+          <text x="70" y="120" font-size="10" fill="#aaa">速い ←</text>
+          <text x="500" y="120" font-size="10" fill="#aaa">→ 遅い</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. ファイル = URLルーティング -->
+  <div class="section-title"><span class="badge">3</span>ファイル名がそのままURLになる！</div>
+  <div class="card">
+    <p style="font-size:13px; color:#555; margin-bottom:14px; line-height:1.7;">
+      <strong>ルーティング</strong>とは「このURLを開いたらどのページを表示するか」の振り分けのこと。<br>
+      Next.jsでは<code style="background:#f0f0f0;padding:2px 6px;border-radius:4px;">app/</code>フォルダのファイル構造がそのままURLになります。設定ファイルは不要！
+    </p>
+    <div class="routing-box">
+      <div class="routing-row">
+        <span class="file-path">app/page.tsx</span>
+        <span class="arrow-r">→</span>
+        <span class="url-path">example.com/</span>
+        <span class="route-note">（トップページ）</span>
+      </div>
+      <div class="routing-row">
+        <span class="file-path">app/about/page.tsx</span>
+        <span class="arrow-r">→</span>
+        <span class="url-path">example.com/about</span>
+        <span class="route-note">（会社概要ページ）</span>
+      </div>
+      <div class="routing-row">
+        <span class="file-path">app/blog/page.tsx</span>
+        <span class="arrow-r">→</span>
+        <span class="url-path">example.com/blog</span>
+        <span class="route-note">（ブログ一覧）</span>
+      </div>
+      <div class="routing-row">
+        <span class="file-path">app/blog/[id]/page.tsx</span>
+        <span class="arrow-r">→</span>
+        <span class="url-path">example.com/blog/123</span>
+        <span class="route-note">（記事ID=123の詳細）</span>
+      </div>
+    </div>
+    <p style="font-size:12px; color:#888; margin-top:10px;">
+      💡 <code style="background:#f0f0f0;padding:1px 4px;border-radius:3px;">[id]</code> のように <strong>[ ] で囲む</strong>と「どんな値でも受け取れる動的なURL」になります。
+    </p>
+  </div>
+
+  <!-- 4. メリット -->
+  <div class="section-title"><span class="badge">4</span>Next.jsを使うメリット</div>
+  <div class="merit-list" style="margin-bottom:24px;">
+    <div class="merit-item">
+      <div class="merit-icon">⚡</div>
+      <div class="merit-title">表示が高速</div>
+      <div class="merit-desc">事前にHTMLを用意する仕組みにより、ページの読み込みが爆速になる。</div>
+    </div>
+    <div class="merit-item">
+      <div class="merit-icon">🔍</div>
+      <div class="merit-title">SEOに強い</div>
+      <div class="merit-desc">検索エンジンが読めるHTMLを最初から返すので、Google検索の上位に載りやすい。</div>
+    </div>
+    <div class="merit-item">
+      <div class="merit-icon">📁</div>
+      <div class="merit-title">設定がシンプル</div>
+      <div class="merit-desc">ファイルを置くだけでURLが決まる。複雑な設定ファイルが要らない。</div>
+    </div>
+    <div class="merit-item">
+      <div class="merit-icon">🎛️</div>
+      <div class="merit-title">柔軟に使い分け</div>
+      <div class="merit-desc">SSG/SSR/CSRをページごとに選択できる。用途に応じた最適な方法をとれる。</div>
+    </div>
+    <div class="merit-item">
+      <div class="merit-icon">🔒</div>
+      <div class="merit-title">API機能内蔵</div>
+      <div class="merit-desc">サーバー側の処理（DB操作・認証など）も同じプロジェクト内に書ける。</div>
+    </div>
+    <div class="merit-item">
+      <div class="merit-icon">🚀</div>
+      <div class="merit-title">Vercelで即公開</div>
+      <div class="merit-desc">開発会社Vercelのサービスと相性抜群。GitHubと連携するだけで無料で本番公開できる。</div>
+    </div>
+  </div>
+
+  <!-- まとめ -->
+  <div class="summary-banner">
+    <h2>📝 まとめ：Next.jsとは？</h2>
+    <p>
+      Reactで作ったUIを、<strong>SEOに強く・高速に・簡単に</strong>Webで公開できる仕組みです。<br>
+      「ファイルを置けばURLが生まれ、用途に応じてサーバー/ブラウザどちらでも動かせる」<br>
+      これだけ覚えておけばOK！
+    </p>
+  </div>
+
+</div>
+</body>
+</html>
