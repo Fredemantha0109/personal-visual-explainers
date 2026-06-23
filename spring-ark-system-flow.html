@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spring Ark — システム全体フロー</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Noto Sans JP', sans-serif; background: #030712; }
+  </style>
+</head>
+<body class="text-white min-h-screen px-10 py-10">
+<div class="max-w-[1440px] mx-auto">
+
+  <!-- ヘッダー -->
+  <div class="text-center mb-10">
+    <div class="inline-flex items-center gap-4 mb-4">
+      <div class="w-1.5 h-10 rounded-full bg-emerald-400 opacity-80"></div>
+      <h1 class="text-5xl font-black tracking-tight">Spring Ark</h1>
+      <div class="w-1.5 h-10 rounded-full bg-rose-400 opacity-80"></div>
+    </div>
+    <p class="text-3xl font-bold text-slate-300 mb-3">システム全体フロー</p>
+    <p class="text-slate-500 text-lg tracking-wide">「意志力ではなく、設計と構造で目標を達成する」</p>
+  </div>
+
+  <!-- ゾーンヘッダー行 -->
+  <div class="flex gap-4 mb-4">
+    <!-- ラベル列のプレースホルダー -->
+    <div class="w-44 flex-shrink-0"></div>
+
+    <!-- ① 入力 -->
+    <div class="flex-1 rounded-2xl py-3.5 text-center bg-emerald-950/60 border-2 border-emerald-500/50">
+      <span class="text-emerald-400 font-black text-2xl tracking-wide">① 入力</span>
+    </div>
+
+    <!-- 矢印プレースホルダー -->
+    <div class="w-16 flex-shrink-0"></div>
+
+    <!-- ② データ保存 -->
+    <div class="flex-1 rounded-2xl py-3.5 text-center bg-violet-950/60 border-2 border-violet-500/50">
+      <span class="text-violet-400 font-black text-2xl tracking-wide">② データ保存</span>
+    </div>
+
+    <!-- 矢印プレースホルダー -->
+    <div class="w-16 flex-shrink-0"></div>
+
+    <!-- ③ 自動処理 -->
+    <div class="flex-1 rounded-2xl py-3.5 text-center bg-orange-950/60 border-2 border-orange-500/50">
+      <span class="text-orange-400 font-black text-2xl tracking-wide">③ 自動処理</span>
+    </div>
+
+    <!-- 矢印プレースホルダー -->
+    <div class="w-16 flex-shrink-0"></div>
+
+    <!-- ④ 出力 -->
+    <div class="flex-1 rounded-2xl py-3.5 text-center bg-rose-950/60 border-2 border-rose-500/50">
+      <span class="text-rose-400 font-black text-2xl tracking-wide">④ 出力</span>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       フロー① 毎朝の流れ
+  ════════════════════════════════════ -->
+  <div class="flex gap-4 mb-4 items-stretch">
+
+    <!-- フローラベル -->
+    <div class="w-44 flex-shrink-0 rounded-2xl border border-slate-700 bg-slate-900/80 flex flex-col items-center justify-center p-4 text-center">
+      <span class="text-slate-500 text-xs font-bold tracking-[0.2em] uppercase mb-2">FLOW ①</span>
+      <span class="text-white font-black text-2xl leading-snug">毎朝の<br>流れ</span>
+      <span class="text-slate-500 text-sm mt-2 font-medium">起床後すぐ</span>
+    </div>
+
+    <!-- 入力カード: iPhone ショートカット -->
+    <div class="flex-1 rounded-2xl border-2 border-emerald-500/40 bg-emerald-950/35 p-6">
+      <div class="flex items-center gap-3 mb-5">
+        <span class="text-3xl">📱</span>
+        <div>
+          <p class="text-emerald-400 font-black text-xl">iPhone ショートカット</p>
+          <p class="text-emerald-600 text-sm font-medium">手動 + 自動連携</p>
+        </div>
+      </div>
+      <ul class="space-y-3">
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 flex-shrink-0"></span>
+          体重 <span class="text-emerald-400/70 text-sm ml-1">手入力</span>
+        </li>
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 flex-shrink-0"></span>
+          体調 <span class="text-emerald-400/70 text-sm ml-1">リスト選択</span>
+        </li>
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 flex-shrink-0"></span>
+          睡眠 <span class="text-emerald-400/70 text-sm ml-1">Apple Health 自動連携</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- 矢印 -->
+    <div class="w-16 flex-shrink-0 flex items-center justify-center">
+      <div class="flex items-center w-full">
+        <div class="flex-1 h-0.5 bg-gradient-to-r from-emerald-700/70 to-violet-700/70"></div>
+        <svg class="w-5 h-5 text-violet-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- データ保存カード: Notion DB -->
+    <div class="flex-1 rounded-2xl border-2 border-violet-500/40 bg-violet-950/35 p-6">
+      <div class="flex items-center gap-3 mb-5">
+        <span class="text-3xl">📔</span>
+        <div>
+          <p class="text-violet-400 font-black text-xl">Notion DB</p>
+          <p class="text-violet-600 text-sm font-medium">Daily Log ページ</p>
+        </div>
+      </div>
+      <ul class="space-y-3">
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-violet-500 flex-shrink-0"></span>
+          Daily Log ページ作成
+        </li>
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-violet-500 flex-shrink-0"></span>
+          体重・体調・睡眠を記録
+        </li>
+      </ul>
+    </div>
+
+    <!-- 矢印 -->
+    <div class="w-16 flex-shrink-0 flex items-center justify-center">
+      <div class="flex items-center w-full">
+        <div class="flex-1 h-0.5 bg-gradient-to-r from-violet-700/70 to-orange-700/70"></div>
+        <svg class="w-5 h-5 text-orange-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 自動処理カード: GitHub Actions → Claude API（従属呼び出し関係） -->
+    <div class="flex-1 rounded-2xl border-2 border-orange-500/40 bg-orange-950/35 p-6 flex flex-col">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-3xl">⚙️</span>
+        <div>
+          <p class="text-orange-400 font-black text-xl">GitHub Actions</p>
+          <p class="text-orange-600 text-sm font-medium">ワークフロー実行</p>
+        </div>
+      </div>
+      <ul class="space-y-2 mb-4">
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-orange-500 flex-shrink-0"></span>
+          トリガー起動・ワークフロー実行
+        </li>
+      </ul>
+      <!-- 呼び出し矢印（下向き） -->
+      <div class="flex items-center gap-2 mb-3 pl-1">
+        <div class="flex flex-col items-center">
+          <div class="w-px h-4 bg-orange-500/50"></div>
+          <svg class="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <span class="text-orange-500/80 text-sm font-bold">Claude API を呼び出す</span>
+      </div>
+      <!-- Claude API ネストブロック -->
+      <div class="ml-3 rounded-xl border border-orange-400/35 bg-orange-950/60 p-4">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-xl">🤖</span>
+          <p class="text-orange-300 font-bold text-base">Claude API</p>
+        </div>
+        <ul class="space-y-2">
+          <li class="flex items-center gap-3 text-sm text-slate-200">
+            <span class="w-2 h-2 rounded-full bg-orange-400 flex-shrink-0"></span>
+            推奨作戦を生成
+          </li>
+          <li class="flex items-center gap-3 text-sm text-slate-200">
+            <span class="w-2 h-2 rounded-full bg-orange-400 flex-shrink-0"></span>
+            AI 分析レポート作成
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 矢印 -->
+    <div class="w-16 flex-shrink-0 flex items-center justify-center">
+      <div class="flex items-center w-full">
+        <div class="flex-1 h-0.5 bg-gradient-to-r from-orange-700/70 to-rose-700/70"></div>
+        <svg class="w-5 h-5 text-rose-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 出力カード: Surge + LINE -->
+    <div class="flex-1 rounded-2xl border-2 border-rose-500/40 bg-rose-950/35 p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-3xl">🌐</span>
+        <div>
+          <p class="text-rose-400 font-black text-xl">Surge</p>
+          <p class="text-rose-600 text-sm font-medium">ダッシュボード公開</p>
+        </div>
+      </div>
+      <ul class="space-y-2 mb-4">
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-rose-500 flex-shrink-0"></span>
+          ダッシュボード HTML 公開
+        </li>
+      </ul>
+      <div class="border-t border-rose-500/20 pt-4">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-xl">💬</span>
+          <p class="text-rose-300 font-bold text-base">LINE</p>
+        </div>
+        <ul class="space-y-2">
+          <li class="flex items-center gap-3 text-base text-slate-200">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-400 flex-shrink-0"></span>
+            プッシュ通知送信
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       フロー② タスク管理（随時）
+  ════════════════════════════════════ -->
+  <div class="flex gap-4 mb-4 items-stretch">
+
+    <!-- フローラベル -->
+    <div class="w-44 flex-shrink-0 rounded-2xl border border-slate-700 bg-slate-900/80 flex flex-col items-center justify-center p-4 text-center">
+      <span class="text-slate-500 text-xs font-bold tracking-[0.2em] uppercase mb-2">FLOW ②</span>
+      <span class="text-white font-black text-2xl leading-snug">タスク<br>管理</span>
+      <span class="text-slate-500 text-sm mt-2 font-medium">随時</span>
+    </div>
+
+    <!-- 入力カード: Streamlit -->
+    <div class="flex-1 rounded-2xl border-2 border-emerald-500/40 bg-emerald-950/35 p-6">
+      <div class="flex items-center gap-3 mb-5">
+        <span class="text-3xl">🖥️</span>
+        <div>
+          <p class="text-emerald-400 font-black text-xl">Streamlit</p>
+          <p class="text-emerald-600 text-sm font-medium">タスク入力画面</p>
+        </div>
+      </div>
+      <ul class="space-y-3">
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 flex-shrink-0"></span>
+          タスク完了チェック
+        </li>
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 flex-shrink-0"></span>
+          タスク追加・削除
+        </li>
+      </ul>
+    </div>
+
+    <!-- 矢印 -->
+    <div class="w-16 flex-shrink-0 flex items-center justify-center">
+      <div class="flex items-center w-full">
+        <div class="flex-1 h-0.5 bg-gradient-to-r from-emerald-700/70 to-violet-700/70"></div>
+        <svg class="w-5 h-5 text-violet-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- データ保存カード: Notion DB -->
+    <div class="flex-1 rounded-2xl border-2 border-violet-500/40 bg-violet-950/35 p-6">
+      <div class="flex items-center gap-3 mb-5">
+        <span class="text-3xl">📔</span>
+        <div>
+          <p class="text-violet-400 font-black text-xl">Notion DB</p>
+          <p class="text-violet-600 text-sm font-medium">実績プロパティ</p>
+        </div>
+      </div>
+      <ul class="space-y-3">
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-violet-500 flex-shrink-0"></span>
+          実績プロパティ更新
+        </li>
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-violet-500 flex-shrink-0"></span>
+          完了タスクを記録
+        </li>
+      </ul>
+    </div>
+
+    <!-- 矢印 -->
+    <div class="w-16 flex-shrink-0 flex items-center justify-center">
+      <div class="flex items-center w-full">
+        <div class="flex-1 h-0.5 bg-gradient-to-r from-violet-700/70 to-orange-700/70"></div>
+        <svg class="w-5 h-5 text-orange-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 自動処理カード: GitHub Actions -->
+    <div class="flex-1 rounded-2xl border-2 border-orange-500/40 bg-orange-950/35 p-6">
+      <div class="flex items-center gap-3 mb-5">
+        <span class="text-3xl">⚙️</span>
+        <div>
+          <p class="text-orange-400 font-black text-xl">GitHub Actions</p>
+          <p class="text-orange-600 text-sm font-medium">Notionの更新をトリガー</p>
+        </div>
+      </div>
+      <ul class="space-y-3">
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-orange-500 flex-shrink-0"></span>
+          スコア計算
+        </li>
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-orange-500 flex-shrink-0"></span>
+          ダッシュボード再生成
+        </li>
+      </ul>
+    </div>
+
+    <!-- 矢印 -->
+    <div class="w-16 flex-shrink-0 flex items-center justify-center">
+      <div class="flex items-center w-full">
+        <div class="flex-1 h-0.5 bg-gradient-to-r from-orange-700/70 to-rose-700/70"></div>
+        <svg class="w-5 h-5 text-rose-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 出力カード: Surge -->
+    <div class="flex-1 rounded-2xl border-2 border-rose-500/40 bg-rose-950/35 p-6">
+      <div class="flex items-center gap-3 mb-5">
+        <span class="text-3xl">🌐</span>
+        <div>
+          <p class="text-rose-400 font-black text-xl">Surge</p>
+          <p class="text-rose-600 text-sm font-medium">ダッシュボード更新</p>
+        </div>
+      </div>
+      <ul class="space-y-3">
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-rose-500 flex-shrink-0"></span>
+          ダッシュボード再公開
+        </li>
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-rose-500 flex-shrink-0"></span>
+          最新スコアを即時反映
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       フロー③ 毎週日曜 5:00
+  ════════════════════════════════════ -->
+  <div class="flex gap-4 mb-10 items-stretch">
+
+    <!-- フローラベル -->
+    <div class="w-44 flex-shrink-0 rounded-2xl border border-slate-700 bg-slate-900/80 flex flex-col items-center justify-center p-4 text-center">
+      <span class="text-slate-500 text-xs font-bold tracking-[0.2em] uppercase mb-2">FLOW ③</span>
+      <span class="text-white font-black text-2xl leading-snug">毎週<br>日曜</span>
+      <span class="text-orange-400 text-sm mt-2 font-bold">5:00 AM</span>
+    </div>
+
+    <!-- 入力ゾーン: スケジュールラベルのみ -->
+    <div class="flex-1 rounded-2xl border-2 border-slate-700/50 bg-slate-800/20 flex flex-col items-center justify-center p-6 text-center">
+      <span class="text-4xl mb-4">🗓️</span>
+      <p class="text-slate-300 font-black text-xl mb-1">スケジュール</p>
+      <p class="text-orange-400 font-black text-2xl">毎週日曜</p>
+      <p class="text-orange-300 font-bold text-xl">5:00 AM</p>
+    </div>
+
+    <!-- ② データ保存ゾーン: Flow③では不使用 — 入力から自動処理へ直接接続する通過線 -->
+    <div class="w-16 flex-shrink-0 flex items-center">
+      <div class="w-full h-0.5 bg-orange-700/40"></div>
+    </div>
+    <div class="flex-1 flex items-center justify-center">
+      <div class="w-full h-0.5 bg-orange-700/40"></div>
+    </div>
+    <div class="w-16 flex-shrink-0 flex items-center">
+      <div class="flex-1 h-0.5 bg-gradient-to-r from-orange-700/40 to-orange-700/70"></div>
+      <svg class="w-5 h-5 text-orange-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+      </svg>
+    </div>
+
+    <!-- ③ 自動処理カード: GitHub Actions（週次テンプレートを内部で参照して生成） -->
+    <div class="flex-1 rounded-2xl border-2 border-orange-500/40 bg-orange-950/35 p-6 flex flex-col">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-3xl">⚙️</span>
+        <div>
+          <p class="text-orange-400 font-black text-xl">GitHub Actions</p>
+          <p class="text-orange-600 text-sm font-medium">来週7日分を生成</p>
+        </div>
+      </div>
+      <ul class="space-y-2 mb-4">
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-orange-500 flex-shrink-0"></span>
+          Notion API 呼び出し
+        </li>
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-orange-500 flex-shrink-0"></span>
+          来週 7日分のページを生成
+        </li>
+      </ul>
+      <!-- 週次テンプレート: 内部参照として内包 -->
+      <div class="ml-3 rounded-xl border border-orange-400/35 bg-orange-950/60 p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">📋</span>
+          <p class="text-orange-300 font-bold text-sm">週次テンプレート（参照）</p>
+        </div>
+        <ul class="space-y-1.5">
+          <li class="flex items-center gap-2 text-sm text-slate-200">
+            <span class="w-2 h-2 rounded-full bg-orange-400/70 flex-shrink-0"></span>
+            曜日ごとのタスク定義を読み込み
+          </li>
+          <li class="flex items-center gap-2 text-sm text-slate-200">
+            <span class="w-2 h-2 rounded-full bg-orange-400/70 flex-shrink-0"></span>
+            カテゴリ別タスク設定を反映
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 矢印 -->
+    <div class="w-16 flex-shrink-0 flex items-center justify-center">
+      <div class="flex items-center w-full">
+        <div class="flex-1 h-0.5 bg-gradient-to-r from-orange-700/70 to-violet-700/70"></div>
+        <svg class="w-5 h-5 text-violet-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 出力カード: Notion DB (来週分ページ作成) -->
+    <div class="flex-1 rounded-2xl border-2 border-violet-500/40 bg-violet-950/35 p-6">
+      <div class="flex items-center gap-3 mb-5">
+        <span class="text-3xl">📔</span>
+        <div>
+          <p class="text-violet-400 font-black text-xl">Notion DB</p>
+          <p class="text-violet-600 text-sm font-medium">来週分を自動作成</p>
+        </div>
+      </div>
+      <ul class="space-y-3">
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-violet-500 flex-shrink-0"></span>
+          来週 7日分のページ作成
+        </li>
+        <li class="flex items-center gap-3 text-base text-slate-200">
+          <span class="w-2.5 h-2.5 rounded-full bg-violet-500 flex-shrink-0"></span>
+          各日のタスクを自動登録
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 凡例 -->
+  <div class="flex gap-6 justify-center flex-wrap">
+    <div class="flex items-center gap-2.5">
+      <div class="w-4 h-4 rounded-full bg-emerald-500/60 border-2 border-emerald-500"></div>
+      <span class="text-slate-400 text-base font-medium">入力（iPhone / Streamlit）</span>
+    </div>
+    <div class="flex items-center gap-2.5">
+      <div class="w-4 h-4 rounded-full bg-violet-500/60 border-2 border-violet-500"></div>
+      <span class="text-slate-400 text-base font-medium">Notion DB</span>
+    </div>
+    <div class="flex items-center gap-2.5">
+      <div class="w-4 h-4 rounded-full bg-orange-500/60 border-2 border-orange-500"></div>
+      <span class="text-slate-400 text-base font-medium">GitHub Actions / Claude API</span>
+    </div>
+    <div class="flex items-center gap-2.5">
+      <div class="w-4 h-4 rounded-full bg-rose-500/60 border-2 border-rose-500"></div>
+      <span class="text-slate-400 text-base font-medium">出力（Surge / LINE）</span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
