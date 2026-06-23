@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>月次決算引き継ぎフロー</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0f1923;
+    color: #e8edf2;
+    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+    padding: 20px 16px 40px;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    color: #7dd3fc;
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+  .subtitle {
+    font-size: 11px;
+    text-align: center;
+    color: #64748b;
+    margin-bottom: 20px;
+  }
+
+  /* 担当者バッジ */
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+  }
+  .dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* フェーズラベル */
+  .phase-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #94a3b8;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    padding-left: 4px;
+  }
+
+  /* カード */
+  .card {
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .step-num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .card-body {
+    font-size: 12px;
+    color: #cbd5e1;
+    line-height: 1.6;
+    padding-left: 36px;
+  }
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+    padding-left: 36px;
+  }
+  .tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-weight: 600;
+  }
+
+  /* 矢印 */
+  .arrow {
+    text-align: center;
+    font-size: 20px;
+    color: #334155;
+    margin: 2px 0;
+    line-height: 1;
+  }
+
+  /* チェックポイントボックス */
+  .checkpoint {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 16px 0 4px;
+  }
+  .checkpoint-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #fbbf24;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 5px;
+    line-height: 1.4;
+  }
+  .check-icon {
+    color: #22c55e;
+    font-size: 13px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* 色定義 */
+  .c-blue   { background: #1e3a5f; }
+  .c-teal   { background: #1a3a3a; }
+  .c-purple { background: #2d1b4e; }
+  .c-green  { background: #1a3a26; }
+  .c-orange { background: #3a2a10; }
+
+  .num-blue   { background: #3b82f6; color: #fff; }
+  .num-teal   { background: #14b8a6; color: #fff; }
+  .num-purple { background: #a855f7; color: #fff; }
+  .num-green  { background: #22c55e; color: #fff; }
+  .num-orange { background: #f97316; color: #fff; }
+
+  .border-blue   { border-left: 3px solid #3b82f6; }
+  .border-teal   { border-left: 3px solid #14b8a6; }
+  .border-purple { border-left: 3px solid #a855f7; }
+  .border-green  { border-left: 3px solid #22c55e; }
+  .border-orange { border-left: 3px solid #f97316; }
+
+  .tag-blue   { background: #1e3a5f; color: #7dd3fc; }
+  .tag-teal   { background: #1a3a3a; color: #5eead4; }
+  .tag-purple { background: #2d1b4e; color: #d8b4fe; }
+  .tag-green  { background: #1a3a26; color: #86efac; }
+  .tag-orange { background: #3a2a10; color: #fdba74; }
+
+  .dot-blue   { background: #3b82f6; }
+  .dot-teal   { background: #14b8a6; }
+  .dot-purple { background: #a855f7; }
+  .dot-green  { background: #22c55e; }
+  .dot-orange { background: #f97316; }
+
+  /* 担当者ライン */
+  .owner-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 99px;
+    margin-bottom: 4px;
+  }
+  .owner-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<h1>月次決算 引き継ぎフロー</h1>
+<p class="subtitle">担当者交代時の標準的な引き継ぎ手順</p>
+
+<!-- 凡例 -->
+<div class="legend">
+  <div class="badge"><div class="dot dot-blue"></div><span>前任者</span></div>
+  <div class="badge"><div class="dot dot-teal"></div><span>両者</span></div>
+  <div class="badge"><div class="dot dot-green"></div><span>後任者</span></div>
+  <div class="badge"><div class="dot dot-orange"></div><span>管理者</span></div>
+</div>
+
+<!-- PHASE 1 -->
+<div class="phase-label">📋 Phase 1 — 準備・資料整備</div>
+
+<div class="card c-blue border-blue">
+  <div class="card-header">
+    <div class="step-num num-blue">1</div>
+    <div>
+      <div class="owner-line" style="background:#1e3a5f; color:#7dd3fc;">
+        <div class="owner-dot dot-blue"></div>前任者
+      </div>
+      <div class="card-title">引き継ぎ資料の作成</div>
+    </div>
+  </div>
+  <div class="card-body">月次決算の全工程を文書化する。<br>スケジュール・仕訳ルール・システム操作手順を網羅。</div>
+  <div class="tag-row">
+    <span class="tag tag-blue">業務マニュアル</span>
+    <span class="tag tag-blue">スケジュール表</span>
+    <span class="tag tag-blue">仕訳一覧</span>
+  </div>
+</div>
+
+<div class="arrow">▼</div>
+
+<div class="card c-blue border-blue">
+  <div class="card-header">
+    <div class="step-num num-blue">2</div>
+    <div>
+      <div class="owner-line" style="background:#1e3a5f; color:#7dd3fc;">
+        <div class="owner-dot dot-blue"></div>前任者
+      </div>
+      <div class="card-title">データ・ファイルの整理</div>
+    </div>
+  </div>
+  <div class="card-body">過去12ヶ月分の決算資料を整理・共有フォルダへ格納。<br>パスワード・アクセス権限も引き継ぎリストに記載。</div>
+  <div class="tag-row">
+    <span class="tag tag-blue">過去データ</span>
+    <span class="tag tag-blue">アクセス権限</span>
+  </div>
+</div>
+
+<div class="arrow">▼</div>
+
+<!-- フェーズ区切りSVG -->
+<svg width="100%" height="24" style="margin: 6px 0;">
+  <line x1="0" y1="12" x2="100%" y2="12" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+</svg>
+
+<!-- PHASE 2 -->
+<div class="phase-label">🤝 Phase 2 — 同行・OJT</div>
+
+<div class="card c-teal border-teal">
+  <div class="card-header">
+    <div class="step-num num-teal">3</div>
+    <div>
+      <div class="owner-line" style="background:#1a3a3a; color:#5eead4;">
+        <div class="owner-dot dot-teal"></div>両者
+      </div>
+      <div class="card-title">同行決算（前任者主導）</div>
+    </div>
+  </div>
+  <div class="card-body">実際の月次決算に後任者が同席。<br>前任者が操作しながら口頭で解説。疑問点をその場でQ&A。</div>
+  <div class="tag-row">
+    <span class="tag tag-teal">1〜2回分</span>
+    <span class="tag tag-teal">実地OJT</span>
+  </div>
+</div>
+
+<div class="arrow">▼</div>
+
+<div class="card c-teal border-teal">
+  <div class="card-header">
+    <div class="step-num num-teal">4</div>
+    <div>
+      <div class="owner-line" style="background:#1a3a3a; color:#5eead4;">
+        <div class="owner-dot dot-teal"></div>両者
+      </div>
+      <div class="card-title">同行決算（後任者主導）</div>
+    </div>
+  </div>
+  <div class="card-body">後任者がメインで操作し、前任者がサポート・確認役に回る。<br>ミス・不明点をリストアップして資料に反映。</div>
+  <div class="tag-row">
+    <span class="tag tag-teal">1〜2回分</span>
+    <span class="tag tag-teal">フォロー体制</span>
+  </div>
+</div>
+
+<div class="arrow">▼</div>
+
+<svg width="100%" height="24" style="margin: 6px 0;">
+  <line x1="0" y1="12" x2="100%" y2="12" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+</svg>
+
+<!-- PHASE 3 -->
+<div class="phase-label">✅ Phase 3 — 確認・承認</div>
+
+<div class="card c-purple border-purple">
+  <div class="card-header">
+    <div class="step-num num-purple">5</div>
+    <div>
+      <div class="owner-line" style="background:#3a2a10; color:#fdba74;">
+        <div class="owner-dot dot-orange"></div>管理者
+      </div>
+      <div class="card-title">引き継ぎ内容のレビュー</div>
+    </div>
+  </div>
+  <div class="card-body">管理者がマニュアル・チェックリストの完成度を確認。<br>抜け漏れがあれば前任者へフィードバック・修正を依頼。</div>
+  <div class="tag-row">
+    <span class="tag tag-purple">ダブルチェック</span>
+    <span class="tag tag-purple">品質保証</span>
+  </div>
+</div>
+
+<div class="arrow">▼</div>
+
+<!-- チェックポイント -->
+<div class="checkpoint">
+  <div class="checkpoint-title">
+    <span>⚠️</span> 引き継ぎ完了チェックリスト
+  </div>
+  <div class="check-item"><span class="check-icon">✔</span>業務マニュアルが最新化されている</div>
+  <div class="check-item"><span class="check-icon">✔</span>過去データへのアクセスが確認できた</div>
+  <div class="check-item"><span class="check-icon">✔</span>システムログイン情報が引き継がれた</div>
+  <div class="check-item"><span class="check-icon">✔</span>関係部署・外部業者への連絡済み</div>
+  <div class="check-item"><span class="check-icon">✔</span>後任者が単独で1回完遂できた</div>
+</div>
+
+<div class="arrow">▼</div>
+
+<!-- PHASE 4 -->
+<div class="phase-label">🚀 Phase 4 — 単独運用開始</div>
+
+<div class="card c-green border-green">
+  <div class="card-header">
+    <div class="step-num num-green">6</div>
+    <div>
+      <div class="owner-line" style="background:#1a3a26; color:#86efac;">
+        <div class="owner-dot dot-green"></div>後任者
+      </div>
+      <div class="card-title">単独での月次決算スタート</div>
+    </div>
+  </div>
+  <div class="card-body">後任者が単独で月次決算を完遂。<br>初月は前任者がリモート待機で質問対応。</div>
+  <div class="tag-row">
+    <span class="tag tag-green">自立運用</span>
+    <span class="tag tag-green">前任者待機</span>
+  </div>
+</div>
+
+<div class="arrow">▼</div>
+
+<div class="card c-orange border-orange">
+  <div class="card-header">
+    <div class="step-num num-orange">7</div>
+    <div>
+      <div class="owner-line" style="background:#3a2a10; color:#fdba74;">
+        <div class="owner-dot dot-orange"></div>管理者
+      </div>
+      <div class="card-title">引き継ぎ完了の正式承認</div>
+    </div>
+  </div>
+  <div class="card-body">管理者が引き継ぎ完了を書面で承認し記録に残す。<br>以後は後任者が正式な担当者として業務を遂行。</div>
+  <div class="tag-row">
+    <span class="tag tag-orange">書面承認</span>
+    <span class="tag tag-orange">引き継ぎ完了</span>
+  </div>
+</div>
+
+<!-- フッター -->
+<svg width="100%" height="40" style="margin-top: 24px;">
+  <rect x="0" y="15" width="100%" height="10" rx="5" fill="#1e293b"/>
+  <rect x="0" y="15" width="100%" height="10" rx="5" fill="url(#grad)"/>
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#3b82f6"/>
+      <stop offset="33%"  stop-color="#14b8a6"/>
+      <stop offset="66%"  stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+  </defs>
+</svg>
+<p style="text-align:center; font-size:10px; color:#475569; margin-top:4px;">
+  Phase 1 準備 → Phase 2 OJT → Phase 3 確認 → Phase 4 運用
+</p>
+
+</body>
+</html>
