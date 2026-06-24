@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude(クロード)とは</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: clamp(350px, 90vw, 800px);
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: clamp(24px, 6vw, 36px);
+            text-align: center;
+            margin-bottom: 30px;
+            color: #64b5f6;
+            font-weight: 700;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(100, 181, 246, 0.3);
+            border-radius: 12px;
+            padding: clamp(16px, 4vw, 24px);
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .card-title {
+            font-size: clamp(16px, 4vw, 20px);
+            color: #64b5f6;
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: #64b5f6;
+            border-radius: 2px;
+        }
+        
+        .card-content {
+            font-size: clamp(14px, 3.5vw, 16px);
+            line-height: 1.6;
+            color: #b0b0b0;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .feature-item {
+            background: rgba(100, 181, 246, 0.1);
+            border: 1px solid rgba(100, 181, 246, 0.2);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: clamp(13px, 3vw, 14px);
+            color: #90caf9;
+        }
+        
+        .comparison {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        
+        .comparison-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: rgba(100, 181, 246, 0.08);
+            border-radius: 6px;
+            font-size: clamp(13px, 3vw, 14px);
+        }
+        
+        .comparison-item strong {
+            color: #64b5f6;
+        }
+        
+        .footer-note {
+            text-align: center;
+            font-size: clamp(11px, 2.5vw, 12px);
+            color: #666;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(100, 181, 246, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Claude</h1>
+        
+        <div class="card">
+            <div class="card-title">基本情報</div>
+            <div class="card-content">
+                Anthropic社が開発した次世代AIアシスタント。安全性と有用性のバランスを重視し、会話型のインターフェースで複雑なタスクをサポートします。
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">主な機能</div>
+            <div class="features">
+                <div class="feature-item">💬 自然な会話</div>
+                <div class="feature-item">📝 テキスト作成</div>
+                <div class="feature-item">🔍 分析・要約</div>
+                <div class="feature-item">💻 コード生成</div>
+                <div class="feature-item">🧠 推論タスク</div>
+                <div class="feature-item">📚 知識検索</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">特徴</div>
+            <div class="comparison">
+                <div class="comparison-item">
+                    <strong>安全性:</strong> <span>有害出力を最小化</span>
+                </div>
+                <div class="comparison-item">
+                    <strong>正確性:</strong> <span>信頼できる回答重視</span>
+                </div>
+                <div class="comparison-item">
+                    <strong>文脈対応:</strong> <span>長文でも一貫性を保持</span>
+                </div>
+                <div class="comparison-item">
+                    <strong>透明性:</strong> <span>判断根拠を説明可能</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">利用方法</div>
+            <div class="card-content">
+                💻 <strong>Claude.ai</strong> - ブラウザで無料利用<br>
+                📱 <strong>モバイルアプリ</strong> - iOS/Android<br>
+                🔌 <strong>API</strong> - 開発者向け統合<br>
+                🎯 <strong>企業向けプラン</strong> - カスタマイズ対応
+            </div>
+        </div>
+        
+        <div class="footer-note">
+            詳しい正式版は1〜2分後にNotionの図解ログに追加されます
+        </div>
+    </div>
+</body>
+</html>
