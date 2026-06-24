@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React基礎図解</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #0f1419;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: clamp(16px, 5vw, 32px);
+      min-height: 100vh;
+    }
+    .container {
+      max-width: clamp(320px, 100%, 850px);
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: clamp(24px, 6vw, 32px);
+      text-align: center;
+      margin-bottom: clamp(20px, 5vw, 32px);
+      color: #61dafb;
+    }
+    .section {
+      background: #1a1f26;
+      border-left: 4px solid #61dafb;
+      padding: clamp(16px, 4vw, 24px);
+      margin-bottom: clamp(16px, 4vw, 24px);
+      border-radius: 6px;
+    }
+    .section h2 {
+      font-size: clamp(16px, 4vw, 20px);
+      margin-bottom: clamp(10px, 3vw, 16px);
+      color: #61dafb;
+    }
+    .section p {
+      font-size: clamp(13px, 3vw, 15px);
+      line-height: 1.6;
+      margin-bottom: clamp(8px, 2vw, 12px);
+    }
+    .flow-diagram {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(8px, 2vw, 12px);
+      margin: clamp(12px, 3vw, 16px) 0;
+    }
+    .flow-box {
+      background: #2a3139;
+      border: 2px solid #61dafb;
+      border-radius: 4px;
+      padding: clamp(10px, 3vw, 14px);
+      text-align: center;
+      font-weight: bold;
+      font-size: clamp(12px, 3vw, 14px);
+      color: #ffffff;
+    }
+    .arrow {
+      text-align: center;
+      color: #61dafb;
+      font-size: clamp(16px, 4vw, 20px);
+      padding: clamp(4px, 1vw, 6px) 0;
+    }
+    .code-snippet {
+      background: #0d1117;
+      border: 1px solid #444;
+      border-radius: 4px;
+      padding: clamp(12px, 3vw, 16px);
+      margin: clamp(10px, 2vw, 12px) 0;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      font-size: clamp(11px, 2.5vw, 13px);
+      color: #79c0ff;
+      line-height: 1.4;
+    }
+    .key-points {
+      background: rgba(97, 218, 251, 0.1);
+      border-radius: 4px;
+      padding: clamp(12px, 3vw, 16px);
+      margin: clamp(12px, 3vw, 16px) 0;
+    }
+    .key-points li {
+      margin-left: clamp(16px, 3vw, 24px);
+      margin-bottom: clamp(6px, 1.5vw, 10px);
+      font-size: clamp(13px, 3vw, 15px);
+      line-height: 1.5;
+    }
+    .footer {
+      text-align: center;
+      margin-top: clamp(24px, 5vw, 40px);
+      font-size: clamp(11px, 2vw, 12px);
+      color: #808080;
+      padding-top: clamp(12px, 2vw, 16px);
+      border-top: 1px solid #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚛️ React基礎図解</h1>
+
+    <!-- Section 1: JSXとは -->
+    <div class="section">
+      <h2>1. JSX（JavaScriptとHTMLの融合）</h2>
+      <p>JavaScriptの中にHTML構文を書ける特別な記法。ブラウザが理解できるJavaScriptに変換される。</p>
+      <div class="code-snippet">
+const Button = () => {<br>
+  return &lt;button&gt;クリック&lt;/button&gt;;<br>
+};
+      </div>
+      <p style="color: #a0a0a0; font-size: clamp(12px, 2.5vw, 13px);">↓ コンパイルされると React.createElement() に変換される</p>
+    </div>
+
+    <!-- Section 2: コンポーネント -->
+    <div class="section">
+      <h2>2. コンポーネント（再利用可能な部品）</h2>
+      <p>UIを部品単位で分割・管理する。関数またはクラスで定義。</p>
+      <div class="code-snippet">
+const Card = (props) => {<br>
+  return &lt;div&gt;{props.title}&lt;/div&gt;;<br>
+};
+      </div>
+      <ul class="key-points">
+        <li><strong>関数型：</strong>シンプルで主流（hooks対応）</li>
+        <li><strong>クラス型：</strong>古い書き方（ライフサイクルメソッド使用）</li>
+      </ul>
+    </div>
+
+    <!-- Section 3: State（状態管理） -->
+    <div class="section">
+      <h2>3. State（変動するデータ）</h2>
+      <p>コンポーネントが保持するデータ。Stateが変わると画面が自動再レンダリングされる。</p>
+      <div class="code-snippet">
+const [count, setCount] = useState(0);<br>
+&lt;button onClick={() => setCount(count + 1)}&gt;<br>
+  {count}<br>
+&lt;/button&gt;
+      </div>
+      <p style="color: #a0a0a0; font-size: clamp(12px, 2.5vw, 13px);">useState は hooks の代表例。関数型コンポーネントでstate管理を実現。</p>
+    </div>
+
+    <!-- Section 4: データフロー -->
+    <div class="section">
+      <h2>4. Reactのデータフロー（単方向）</h2>
+      <div class="flow-diagram">
+        <div class="flow-box">親コンポーネント（State保持）</div>
+        <div class="arrow">↓ Props で下へ渡す</div>
+        <div class="flow-box">子コンポーネント（Props受け取り）</div>
+        <div class="arrow">↑ コールバック関数で上へ通知</div>
+        <div class="flow-box">親が State を更新 → 再レンダリング</div>
+      </div>
+    </div>
+
+    <!-- Section 5: 仕組み -->
+    <div class="section">
+      <h2>5. Reactが高速な理由</h2>
+      <ul class="key-points">
+        <li><strong>Virtual DOM：</strong>Reactが仮想的なDOMを保持。変更部分だけを実DOM に反映</li>
+        <li><strong>差分検出（Diffing）：</strong>前後の状態を比較。必要な部分だけ更新</li>
+        <li><strong>バッチ処理：</strong>複数の更新を効率的にまとめて反映</li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      詳しい正式版は1〜2分後にNotionの図解ログに追加されます
+    </div>
+  </div>
+</body>
+</html>
