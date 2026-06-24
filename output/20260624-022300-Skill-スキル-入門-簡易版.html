@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill(スキル)入門</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #e0e0e0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 2rem 1.5rem;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: min(100%, 850px);
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: clamp(1.8rem, 5vw, 2.4rem);
+      text-align: center;
+      margin-bottom: 0.5rem;
+      color: #fff;
+      letter-spacing: 0.05em;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
+      color: #b0b0b0;
+      margin-bottom: 2rem;
+      font-weight: 300;
+    }
+    .section {
+      margin-bottom: 2.5rem;
+    }
+    .section-title {
+      font-size: clamp(1.2rem, 3vw, 1.4rem);
+      color: #00d4ff;
+      margin-bottom: 1.2rem;
+      border-left: 4px solid #00d4ff;
+      padding-left: 1rem;
+      font-weight: 600;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 8px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+    }
+    .card-title {
+      color: #00d4ff;
+      font-weight: 600;
+      font-size: clamp(1rem, 2.5vw, 1.1rem);
+      margin-bottom: 0.5rem;
+    }
+    .card-content {
+      font-size: clamp(0.9rem, 2.2vw, 1rem);
+      color: #d0d0d0;
+    }
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    @media (min-width: 768px) {
+      .flow {
+        flex-direction: row;
+        align-items: stretch;
+        gap: 1.2rem;
+      }
+    }
+    .flow-item {
+      flex: 1;
+      background: rgba(0, 212, 255, 0.1);
+      border: 2px solid rgba(0, 212, 255, 0.5);
+      border-radius: 6px;
+      padding: 1.2rem;
+      text-align: center;
+      position: relative;
+    }
+    .flow-item:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #00d4ff;
+      font-size: 1.5rem;
+      font-weight: bold;
+      display: none;
+    }
+    @media (min-width: 768px) {
+      .flow-item:not(:last-child)::after {
+        display: block;
+      }
+    }
+    .flow-step {
+      color: #00d4ff;
+      font-weight: 700;
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      margin-bottom: 0.5rem;
+    }
+    .flow-desc {
+      color: #c0c0c0;
+      font-size: clamp(0.85rem, 2vw, 0.95rem);
+    }
+    .level-bar {
+      display: flex;
+      gap: 0.6rem;
+      margin: 1rem 0;
+      flex-wrap: wrap;
+    }
+    .level {
+      flex: 1;
+      min-width: 80px;
+      padding: 1rem;
+      border-radius: 6px;
+      text-align: center;
+      font-weight: 600;
+      font-size: clamp(0.85rem, 2vw, 0.95rem);
+    }
+    .level-1 {
+      background: rgba(100, 150, 200, 0.4);
+      border: 1px solid #6496c8;
+      color: #6496c8;
+    }
+    .level-2 {
+      background: rgba(0, 212, 255, 0.3);
+      border: 1px solid #00d4ff;
+      color: #00d4ff;
+    }
+    .level-3 {
+      background: rgba(50, 200, 150, 0.3);
+      border: 1px solid #32c896;
+      color: #32c896;
+    }
+    .level-4 {
+      background: rgba(255, 150, 0, 0.3);
+      border: 1px solid #ff9600;
+      color: #ff9600;
+    }
+    .highlight {
+      background: rgba(255, 200, 0, 0.2);
+      border-left: 3px solid #ffc800;
+      padding: 1rem;
+      border-radius: 4px;
+      margin: 1.2rem 0;
+      font-size: clamp(0.95rem, 2.2vw, 1.05rem);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 2.5rem;
+      font-size: clamp(0.75rem, 1.8vw, 0.85rem);
+      color: #808080;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Skill(スキル)</h1>
+    <p class="subtitle">能力・技能の習得と成長の全体像</p>
+
+    <div class="section">
+      <div class="section-title">スキルとは？</div>
+      <div class="card">
+        <div class="card-title">定義</div>
+        <div class="card-content">練習や経験を通じて習得した、特定の作業や課題を効率的に遂行する能力のこと。</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">スキルの3つの種類</div>
+      <div class="card">
+        <div class="card-title">技術スキル（Hard Skill）</div>
+        <div class="card-content">プログラミング、簿記、言語など、測定可能で習得が明確。</div>
+      </div>
+      <div class="card">
+        <div class="card-title">対人スキル（Soft Skill）</div>
+        <div class="card-content">コミュニケーション、リーダーシップ、交渉力など、人間関係構築に必要。</div>
+      </div>
+      <div class="card">
+        <div class="card-title">思考スキル</div>
+        <div class="card-content">問題解決、論理的思考、創造性など、思考方法に関する能力。</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">習得の流れ</div>
+      <div class="flow">
+        <div class="flow-item">
+          <div class="flow-step">① 学習</div>
+          <div class="flow-desc">知識を得る</div>
+        </div>
+        <div class="flow-item">
+          <div class="flow-step">② 実践</div>
+          <div class="flow-desc">やってみる</div>
+        </div>
+        <div class="flow-item">
+          <div class="flow-step">③ 反復</div>
+          <div class="flow-desc">繰り返す</div>
+        </div>
+        <div class="flow-item">
+          <div class="flow-step">④ 習熟</div>
+          <div class="flow-desc">得意になる</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">スキルレベルの段階</div>
+      <div class="level-bar">
+        <div class="level level-1">未習得</div>
+        <div class="level level-2">初心者</div>
+        <div class="level level-3">中級者</div>
+        <div class="level level-4">上級者</div>
