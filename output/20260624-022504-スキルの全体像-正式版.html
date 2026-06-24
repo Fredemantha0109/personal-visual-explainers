@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>スキルの全体像</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
+    background: #f0f4f8;
+    color: #1a202c;
+    min-height: 100vh;
+  }
+
+  .page-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: clamp(16px, 4vw, 48px) clamp(12px, 3vw, 40px);
+  }
+
+  /* ヘッダー */
+  header {
+    text-align: center;
+    margin-bottom: clamp(24px, 5vw, 48px);
+  }
+  header h1 {
+    font-size: clamp(1.5rem, 4vw, 2.4rem);
+    font-weight: 800;
+    color: #2d3748;
+    letter-spacing: .02em;
+  }
+  header p {
+    margin-top: 8px;
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    color: #718096;
+  }
+
+  /* セクションタイトル */
+  .sec-title {
+    font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+    font-weight: 700;
+    color: #fff;
+    background: #4a5568;
+    display: inline-block;
+    padding: 4px 16px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+
+  /* ① スキルの分類 */
+  .section { margin-bottom: clamp(28px, 6vw, 52px); }
+
+  .skill-types {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+
+  .type-card {
+    border-radius: 14px;
+    padding: clamp(14px, 3vw, 22px);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+  }
+  .type-card .icon { font-size: 1.8rem; }
+  .type-card h3 { font-size: clamp(0.95rem, 2vw, 1.1rem); font-weight: 700; }
+  .type-card p  { font-size: clamp(0.78rem, 1.6vw, 0.88rem); line-height: 1.6; color: #4a5568; }
+  .type-card ul { font-size: clamp(0.75rem, 1.5vw, 0.84rem); color: #4a5568; padding-left: 1.2em; line-height: 1.8; }
+
+  .c-hard   { background: #ebf8ff; border-top: 4px solid #3182ce; }
+  .c-soft   { background: #fef9ec; border-top: 4px solid #d69e2e; }
+  .c-domain { background: #f0fff4; border-top: 4px solid #38a169; }
+  .c-meta   { background: #faf5ff; border-top: 4px solid #805ad5; }
+
+  /* ② 四象限マップ */
+  .quad-wrap {
+    background: #fff;
+    border-radius: 16px;
+    padding: clamp(16px, 3vw, 28px);
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    overflow: hidden;
+  }
+
+  /* ③ 習得プロセス */
+  .flow-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    align-items: stretch;
+    justify-content: center;
+  }
+  .flow-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1 1 140px;
+    max-width: 200px;
+  }
+  .flow-box {
+    width: 100%;
+    border-radius: 12px;
+    padding: clamp(10px, 2.5vw, 16px) 8px;
+    text-align: center;
+    font-size: clamp(0.78rem, 1.6vw, 0.88rem);
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.5;
+    min-height: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+  }
+  .flow-box .step-no {
+    font-size: clamp(0.65rem, 1.4vw, 0.75rem);
+    opacity: .8;
+    font-weight: 400;
+  }
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    color: #a0aec0;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    align-self: center;
+  }
+  @media (max-width: 500px) {
+    .flow-wrap { flex-direction: column; align-items: center; }
+    .flow-item { max-width: 100%; width: 100%; flex-direction: row; gap: 0; }
+    .flow-box  { width: 100%; }
+    .flow-arrow { transform: rotate(90deg); padding: 4px 0; }
+  }
+
+  .s1 { background: #3182ce; }
+  .s2 { background: #38a169; }
+  .s3 { background: #d69e2e; }
+  .s4 { background: #805ad5; }
+  .s5 { background: #e53e3e; }
+
+  /* ④ ドレフュスモデル */
+  .pyramid-wrap {
+    background: #fff;
+    border-radius: 16px;
+    padding: clamp(16px, 3vw, 28px);
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .py-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 600px;
+  }
+  .py-bar {
+    height: clamp(36px, 7vw, 50px);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding-left: clamp(10px, 2vw, 18px);
+    font-size: clamp(0.78rem, 1.6vw, 0.9rem);
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    transition: width .3s;
+  }
+  .py-desc {
+    font-size: clamp(0.72rem, 1.5vw, 0.82rem);
+    color: #718096;
+    white-space: nowrap;
+  }
+
+  /* ⑤ スキルセット戦略 */
+  .strategy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .strat-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: clamp(14px, 3vw, 20px);
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+  }
+  .strat-card h3 {
+    font-size: clamp(0.9rem, 2vw, 1rem);
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .strat-card p {
+    font-size: clamp(0.75rem, 1.6vw, 0.85rem);
+    color: #4a5568;
+    line-height: 1.7;
+  }
+  .badge {
+    display: inline-block;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    color: #fff;
+    text-align: center;
+    line-height: 22px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .b1 { background: #3182ce; }
+  .b2 { background: #805ad5; }
+  .b3 { background: #38a169; }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- ヘッダー -->
+  <header>
+    <h1>🧠 スキル（Skill）の全体像</h1>
+    <p>種類・習得プロセス・熟達モデル・活用戦略を一枚で理解する</p>
+  </header>
+
+  <!-- ① スキルの4分類 -->
+  <section class="section">
+    <div class="sec-title">① スキルの4分類</div>
+    <div class="skill-types">
+      <div class="type-card c-hard">
+        <div class="icon">🔧</div>
+        <h3>ハードスキル</h3>
+        <p>測定・証明できる技術的能力</p>
+        <ul>
+          <li>プログラミング</li>
+          <li>データ分析</li>
+          <li>語学・資格</li>
+          <li>会計・財務</li>
+        </ul>
+      </div>
+      <div class="type-card c-soft">
+        <div class="icon">💬</div>
+        <h3>ソフトスキル</h3>
+        <p>対人・思考・感情に関わる能力</p>
+        <ul>
+          <li>コミュニケーション</li>
+          <li>リーダーシップ</li>
+          <li>問題解決</li>
+          <li>タイムマネジメント</li>
+        </ul>
+      </div>
+      <div class="type-card c-domain">
+        <div class="icon">📚</div>
+        <h3>ドメイン知識</h3>
+        <p>特定分野に深く根ざした専門性</p>
+        <ul>
+          <li>医療・法律・金融</li>
+          <li>業界慣習・規制</li>
+          <li>顧客理解</li>
+          <li>製品・技術知識</li>
+        </ul>
+      </div>
+      <div class="type-card c-meta">
+        <div class="icon">♻️</div>
+        <h3>メタスキル</h3>
+        <p>他のスキル習得を加速する能力</p>
+        <ul>
+          <li>学び方を学ぶ力</li>
+          <li>批判的思考</li>
+          <li>適応力・好奇心</li>
+          <li>自己認識</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ② 四象限マップ（重要度×習得難度） -->
+  <section class="section">
+    <div class="sec-title">② スキルマップ（重要度 × 習得難度）</div>
+    <div class="quad-wrap">
+      <svg viewBox="0 0 500 320" width="100%" style="max-width:600px;display:block;margin:0 auto;">
+        <!-- 軸 -->
+        <line x1="250" y1="10" x2="250" y2="300" stroke="#cbd5e0" stroke-width="1.5" stroke-dasharray="6,4"/>
+        <line x1="20"  y1="160" x2="490" y2="160" stroke="#cbd5e0" stroke-width="1.5" stroke-dasharray="6,4"/>
+        <!-- 軸ラベル -->
+        <text x="255" y="18"  font-size="12" fill="#718096">重要度 高</text>
+        <text x="255" y="298" font-size="12" fill="#718096">重要度 低</text>
+        <text x="22"  y="156" font-size="12" fill="#718096">習得 易</text>
+        <text x="420" y="156" font-size="12" fill="#718096">習得 難</text>
+
+        <!-- 第1象限: 重要高・習得易 → 今すぐ取得 -->
+        <rect x="255" y="14" width="230" height="142" rx="10" fill="#ebf8ff" opacity=".7"/>
+        <text x="370" y="48" font-size="13" font-weight="bold" fill="#3182ce" text-anchor="middle">✅ 今すぐ取得</text>
+        <text x="370" y="66" font-size="10" fill="#4a5568" text-anchor="middle">高リターン × 低コスト</text>
+        <text x="310" y="92" font-size="10" fill="#2b6cb0" text-anchor="middle">・Excel / スプレッドシート</text>
+        <text x="315" y="110" font-size="10" fill="#2b6cb0" text-anchor="middle">・ビジネス文書作成</text>
+        <text x="310" y="128" font-size="10" fill="#2b6cb0" text-anchor="middle">・基本的なAIツール活用</text>
+
+        <!-- 第2象限: 重要高・習得難 → 長期投資 -->
+        <rect x="22" y="14" width="224" height="142" rx="10" fill="#faf5ff" opacity=".7"/>
+        <text x="134" y="48" font-size="13" font-weight="bold" fill="#805ad5" text-anchor="middle">🎯 長期投資</text>
+        <text x="134" y="66" font-size="10" fill="#4a5568" text-anchor="middle">高リターン × 高コスト</text>
+        <text x="134" y="92" font-size="10" fill="#553c9a" text-anchor="middle">・プログラミング</text>
+        <text x="134" y="110" font-size="10" fill="#553c9a" text-anchor="middle">・専門資格（医・法・会）</text>
+        <text x="134" y="128" font-size="10" fill="#553c9a" text-anchor="middle">・リーダーシップ</text>
+
+        <!-- 第3象限: 重要低・習得易 → 余裕で習得 -->
+        <rect x="22" y="164" width="224" height="132" rx="10" fill="#f0fff4" opacity=".7"/>
+        <text x="134" y="198" font-size="13" font-weight="bold" fill="#38a169" text-anchor="middle">💡 余裕で習得</text>
+        <text x="134" y="216" font-size="10" fill="#4a5568" text-anchor="middle">低リターン × 低コスト</text>
+        <text x="134" y="238" font-size="10" fill="#276749" text-anchor="middle">・趣味・教養レベルの知識</text>
+        <text x="134" y="256" font-size="10" fill="#276749" text-anchor="middle">・汎用ツール操作</text>
+
+        <!-- 第4象限: 重要低・習得難 → 後回し -->
+        <rect x="255" y="164" width="230" height="132" rx="10" fill="#fff5f5" opacity=".7"/>
+        <text x="370" y="198" font-size="13" font-weight="bold" fill="#e53e3e" text-anchor="middle">⏸ 後回し</text>
+        <text x="370" y="216" font-size="10" fill="#4a5568" text-anchor="middle">低リターン × 高コスト</text>
+        <text x="370" y="238" font-size="10" fill="#c53030" text-anchor="middle">・不要な高難度資格</text>
+        <text x="370" y="256" font-size="10" fill="#c53030" text-anchor="middle">・無関係な専門知識</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ③ 習得プロセス -->
+  <section class="section">
+    <div class="sec-title">③ スキル習得の5ステップ</div>
+    <div class="flow-wrap">
+      <div class="flow-item">
+        <div class="flow-box s1">
+          <span class="step-no">STEP 1</span>
+          🔍 認識<br>必要なスキルを特定
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-item">
+        <div class="flow-box s2">
+          <span class="step-no">STEP 2</span>
+          📖 学習<br>インプット・理論理解
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-item">
+        <div class="flow-box s3">
+          <span class="step-no">STEP 3</span>
+          🛠 実践<br>小さく試す・失敗
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-item">
+        <div class="flow-box s4">
+          <span class="step-no">STEP 4</span>
+          🔄 内省<br>フィードバックを受ける
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-item">
+        <div class="flow-box s5">
+          <span class="step-no">STEP 5</span>
+          🚀 定着<br>習慣化・無意識化
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ④ ドレフュスモデル（熟達5段階） -->
+  <section class="section">
+    <div class="sec-title">④ 熟達の5段階（ドレフュスモデル）</div>
+    <div class="pyramid-wrap">
+      <div class="py-row">
+        <div class="py-bar" style="width:18%;background:#e53e3e;">エキスパート</div>
+        <div class="py-desc">直感的判断・創造・他者育成</div>
+      </div>
+      <div class="py-row">
+        <div class="py-bar" style="width:30%;background:#dd6b20;">熟練者</div>
+        <div class="py-desc">文脈を読みながら柔軟に応用</div>
+      </div>
+      <div class="py-row">
+        <div class="py-bar" style="width:45%;background:#d69e2e;">有能者</div>
+        <div class="py-desc">計画を立てて自律的に実行</div>
+      </div>
+      <div class="py-row">
+        <div class="py-bar" style="width:65%;background:#38a169;">初心者＋</div>
+        <div class="py-desc">ルールに従いながら応用を試みる</div>
+      </div>
+      <div class="py-row">
+        <div class="py-bar" style="width:88%;background:#3182ce;">初心者</div>
+        <div class="py-desc">手順通りに行動・ルール依存</div>
+      </div>
+      <p style="font-size:0.75rem;color:#a0aec0;margin-top:8px;">← 幅が長いほど人口が多い（ほとんどは中間層）</p>
+    </div>
+  </section>
+
+  <!-- ⑤ スキルセット戦略 -->
+  <section class="section">
+    <div class="sec-title">⑤ スキルセット戦略</div>
+    <div class="strategy-grid">
+      <div class="strat-card">
+        <h3><span class="badge b1">T</span> T字型スキル</h3>
+        <p>1つの領域を深く極め（縦棒）、関連分野を広く浅く（横棒）持つ。<strong>専門家 × 汎用性</strong>のバランス型。</p>
+        <svg viewBox="0 0 120 60" width="100" style="margin-top:8px">
+          <rect x="0" y="0" width="120" height="18" rx="4" fill="#3182ce" opacity=".8"/>
+          <rect x="48" y="18" width="24" height="42" rx="4" fill="#3182ce" opacity=".8"/>
+          <text x="60" y="13" font-size="9" fill="#fff" text-anchor="middle">広い知識（横）</text>
+          <text x="60" y="48" font-size="8" fill="#fff" text-anchor="middle" transform="rotate(-90,60,48)" dy="-2">深い専門</text>
+        </svg>
+      </div>
+      <div class="strat-card">
+        <h3><span class="badge b2">π</span> π字型スキル</h3>
+        <p>2つ以上の深い専門性を持ちつつ広い知識も備える。<strong>掛け合わせによる希少価値</strong>を生む戦略。</p>
+        <svg viewBox="0 0 120 60" width="100" style="margin-top:8px">
+          <rect x="0" y="0" width="120" height="18" rx="4" fill="#805ad5" opacity=".8"/>
+          <rect x="14" y="18" width="24" height="42" rx="4" fill="#805ad5" opacity=".8"/>
+          <rect x="82" y="18" width="24" height="42" rx="4" fill="#805ad5" opacity=".8"/>
+          <text x="60" y="13" font-size="9" fill="#fff" text-anchor="middle">広い知識</text>
+        </svg>
+      </div>
+      <div class="strat-card">
+        <h3><span class="badge b3">∞</span> 複利型習得</h3>
+        <p>スキルは組み合わせることで価値が<strong>掛け算で増大</strong>する。メタスキルを先に磨くと習得速度自体が上がる。</p>
+        <svg viewBox="0 0 120 50" width="100" style="margin-top:8px">
+          <ellipse cx="38" cy="25" rx="30" ry="18" fill="none" stroke="#38a169" stroke-width="3"/>
+          <ellipse cx="82" cy="25" rx="30" ry="18" fill="none" stroke="#3182ce" stroke-width="3"/>
+          <text x="38" y="29" font-size="9" fill="#276749" text-anchor="middle">技術</text>
+          <text x="82" y="29" font-size="9" fill="#2b6cb0" text-anchor="middle">人脈</text>
+          <text x="60" y="29" font-size="8" fill="#553c9a" text-anchor="middle">×</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
