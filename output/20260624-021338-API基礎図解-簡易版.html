@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API基礎図解</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 16px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #4fc3f7;
+            text-align: center;
+        }
+        .section {
+            margin-bottom: 24px;
+            background: #262626;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #4fc3f7;
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #4fc3f7;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .flow-item {
+            background: #333;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 13px;
+            position: relative;
+        }
+        .flow-item.request {
+            background: #1e3a5f;
+            color: #64b5f6;
+        }
+        .flow-item.process {
+            background: #2d3d2d;
+            color: #81c784;
+        }
+        .flow-item.response {
+            background: #5f3a1e;
+            color: #ffb74d;
+        }
+        .arrow {
+            text-align: center;
+            color: #888;
+            font-size: 20px;
+        }
+        .key-point {
+            background: #1a1a1a;
+            padding: 10px;
+            margin: 8px 0;
+            border-left: 3px solid #81c784;
+            font-size: 13px;
+        }
+        .example {
+            background: #2a2a2a;
+            padding: 12px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #90caf9;
+            margin: 8px 0;
+            overflow-x: auto;
+        }
+        .footer {
+            text-align: center;
+            font-size: 11px;
+            color: #666;
+            margin-top: 32px;
+            padding-top: 16px;
+            border-top: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 API基礎ガイド</h1>
+
+        <div class="section">
+            <div class="section-title">APIとは</div>
+            <div class="key-point">
+                <strong>Application Programming Interface</strong><br>
+                アプリケーション同士がデータを やり取りするための「約束された通信手段」
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">基本の流れ</div>
+            <div class="flow-diagram">
+                <div class="flow-item request">
+                📱 クライアント<br>リクエスト送信</div>
+                <div class="arrow">↓</div>
+                <div class="flow-item process">
+                🖥️ サーバー<br>データ処理</div>
+                <div class="arrow">↓</div>
+                <div class="flow-item response">
+                📨 レスポンス<br>データ返却</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">よくある使用例</div>
+            <div class="key-point">
+                ✅ 天気アプリ → 天気データAPI<br>
+                ✅ 地図アプリ → 位置情報API<br>
+                ✅ SNS → 投稿データAPI
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">主なHTTPメソッド</div>
+            <div class="example">
+GET → データ取得<br>
+POST → データ送信<br>
+PUT → データ更新<br>
+DELETE → データ削除
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">ポイント</div>
+            <div class="key-point">
+                🎯 APIは「サービス間の仲介役」<br>
+                🎯 リクエスト→処理→レスポンスのサイクル<br>
+                🎯 統一フォーマットで確実なやり取り
+            </div>
+        </div>
+
+        <div class="footer">
+            詳しい正式版は1〜2分後にNotionの図解ログに追加されます
+        </div>
+    </div>
+</body>
+</html>
