@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLMとは何か？</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Hiragino Sans", "Meiryo", sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: clamp(16px, 4vw, 48px) clamp(12px, 4vw, 24px);
+  }
+
+  .page-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ヘッダー */
+  .header {
+    text-align: center;
+    margin-bottom: clamp(24px, 4vw, 48px);
+  }
+  .header .badge {
+    display: inline-block;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    color: #fff;
+    font-size: clamp(11px, 2vw, 13px);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 4px 14px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-size: clamp(22px, 5vw, 40px);
+    font-weight: 900;
+    background: linear-gradient(90deg, #a5b4fc, #e879f9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+  }
+  .header p {
+    margin-top: 10px;
+    font-size: clamp(12px, 2.5vw, 15px);
+    color: #94a3b8;
+  }
+
+  /* セクションタイトル */
+  .section-title {
+    font-size: clamp(13px, 2.5vw, 16px);
+    font-weight: 700;
+    color: #a5b4fc;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: clamp(12px, 2vw, 20px);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 1em;
+    background: linear-gradient(180deg, #6366f1, #8b5cf6);
+    border-radius: 2px;
+  }
+
+  /* カード */
+  .card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: clamp(16px, 3vw, 28px);
+    margin-bottom: clamp(16px, 3vw, 28px);
+  }
+
+  /* ①LLMとは */
+  .llm-def {
+    display: flex;
+    align-items: center;
+    gap: clamp(16px, 3vw, 32px);
+    flex-wrap: wrap;
+  }
+  .llm-def-text {
+    flex: 1 1 200px;
+  }
+  .llm-def-text h2 {
+    font-size: clamp(18px, 4vw, 26px);
+    font-weight: 900;
+    color: #f1f5f9;
+    margin-bottom: 10px;
+  }
+  .llm-def-text p {
+    font-size: clamp(12px, 2vw, 14px);
+    color: #cbd5e1;
+    line-height: 1.8;
+  }
+  .llm-def-svg {
+    flex: 0 0 auto;
+    width: clamp(160px, 35vw, 260px);
+  }
+
+  /* ②仕組みフロー */
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .flow-item {
+    flex: 1 1 100px;
+    min-width: 90px;
+    max-width: 180px;
+    text-align: center;
+  }
+  .flow-box {
+    border-radius: 12px;
+    padding: clamp(10px, 2vw, 16px) clamp(6px, 1.5vw, 12px);
+    font-size: clamp(11px, 1.8vw, 13px);
+    font-weight: 700;
+    margin: 0 auto;
+  }
+  .flow-icon {
+    font-size: clamp(22px, 4vw, 32px);
+    margin-bottom: 6px;
+  }
+  .flow-label {
+    margin-top: 6px;
+    font-size: clamp(10px, 1.6vw, 12px);
+    color: #94a3b8;
+  }
+  .flow-arrow {
+    font-size: clamp(18px, 3vw, 26px);
+    color: #475569;
+    flex: 0 0 auto;
+    padding: 0 clamp(4px, 1vw, 10px);
+    align-self: center;
+  }
+
+  /* ③スケール3要素 */
+  .scale-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: clamp(10px, 2vw, 18px);
+  }
+  .scale-item {
+    background: #0f172a;
+    border-radius: 12px;
+    padding: clamp(12px, 2vw, 20px);
+    text-align: center;
+    border: 1px solid #1e293b;
+  }
+  .scale-num {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .scale-sub {
+    font-size: clamp(11px, 1.8vw, 13px);
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 4px;
+  }
+  .scale-desc {
+    font-size: clamp(10px, 1.6vw, 12px);
+    color: #64748b;
+  }
+
+  /* ④トークン説明 */
+  .token-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-top: 14px;
+  }
+  .token {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: clamp(13px, 2.5vw, 16px);
+    font-weight: 700;
+    border: 2px solid;
+  }
+  .tok-arrow {
+    font-size: 20px;
+    color: #475569;
+  }
+  .token-note {
+    font-size: clamp(10px, 1.8vw, 12px);
+    color: #64748b;
+    margin-top: 8px;
+  }
+
+  /* ⑤できること */
+  .use-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: clamp(8px, 2vw, 14px);
+  }
+  .use-item {
+    background: #0f172a;
+    border-radius: 12px;
+    padding: clamp(10px, 2vw, 18px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #1e293b;
+    transition: border-color 0.2s;
+  }
+  .use-icon {
+    font-size: clamp(24px, 4vw, 32px);
+  }
+  .use-label {
+    font-size: clamp(11px, 1.8vw, 13px);
+    font-weight: 700;
+    color: #f1f5f9;
+    text-align: center;
+  }
+  .use-desc {
+    font-size: clamp(9px, 1.5vw, 11px);
+    color: #64748b;
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  /* ⑥限界 */
+  .limit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: clamp(8px, 2vw, 14px);
+  }
+  .limit-item {
+    background: #1a0a0a;
+    border: 1px solid #7f1d1d;
+    border-radius: 12px;
+    padding: clamp(10px, 2vw, 16px);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .limit-icon { font-size: 20px; flex-shrink: 0; }
+  .limit-text-title {
+    font-size: clamp(11px, 1.8vw, 13px);
+    font-weight: 700;
+    color: #fca5a5;
+    margin-bottom: 3px;
+  }
+  .limit-text-desc {
+    font-size: clamp(10px, 1.5vw, 12px);
+    color: #9ca3af;
+    line-height: 1.5;
+  }
+
+  /* フッター */
+  .footer {
+    text-align: center;
+    margin-top: clamp(24px, 4vw, 40px);
+    font-size: clamp(10px, 1.5vw, 12px);
+    color: #334155;
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- ヘッダー -->
+  <div class="header">
+    <div class="badge">AI TECH</div>
+    <h1>LLM（大規模言語モデル）とは？</h1>
+    <p>Large Language Model — 言語を理解・生成するAIの仕組みを一枚で解説</p>
+  </div>
+
+  <!-- ①定義 -->
+  <div class="card">
+    <div class="section-title">LLMとは</div>
+    <div class="llm-def">
+      <div class="llm-def-text">
+        <h2>「次の単語を予測する」<br>を極限まで巨大化したAI</h2>
+        <p>
+          膨大なテキストデータで学習し、<br>
+          文脈から<strong style="color:#a5b4fc">「次にくる最適な言葉」</strong>を確率的に予測するモデル。<br>
+          スケールが大きくなると、翻訳・要約・推論など<br>
+          想定外の能力が<em style="color:#e879f9">「創発」</em>する。
+        </p>
+      </div>
+      <div class="llm-def-svg">
+        <svg viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg" width="100%">
+          <!-- 背景 -->
+          <rect width="260" height="180" rx="14" fill="#0f172a"/>
+          <!-- ノード群 -->
+          <circle cx="40" cy="90" r="18" fill="#6366f1" opacity="0.85"/>
+          <circle cx="100" cy="55" r="14" fill="#8b5cf6" opacity="0.75"/>
+          <circle cx="100" cy="125" r="14" fill="#8b5cf6" opacity="0.75"/>
+          <circle cx="160" cy="40" r="11" fill="#a78bfa" opacity="0.65"/>
+          <circle cx="160" cy="90" r="11" fill="#a78bfa" opacity="0.65"/>
+          <circle cx="160" cy="140" r="11" fill="#a78bfa" opacity="0.65"/>
+          <circle cx="220" cy="90" r="18" fill="#e879f9" opacity="0.85"/>
+          <!-- エッジ -->
+          <line x1="58" y1="84" x2="86" y2="62" stroke="#6366f1" stroke-width="1.5" opacity="0.5"/>
+          <line x1="58" y1="96" x2="86" y2="118" stroke="#6366f1" stroke-width="1.5" opacity="0.5"/>
+          <line x1="114" y1="55" x2="149" y2="44" stroke="#8b5cf6" stroke-width="1.5" opacity="0.5"/>
+          <line x1="114" y1="60" x2="149" y2="87" stroke="#8b5cf6" stroke-width="1.5" opacity="0.5"/>
+          <line x1="114" y1="120" x2="149" y2="93" stroke="#8b5cf6" stroke-width="1.5" opacity="0.5"/>
+          <line x1="114" y1="130" x2="149" y2="138" stroke="#8b5cf6" stroke-width="1.5" opacity="0.5"/>
+          <line x1="171" y1="44" x2="202" y2="80" stroke="#a78bfa" stroke-width="1.5" opacity="0.5"/>
+          <line x1="171" y1="90" x2="202" y2="90" stroke="#a78bfa" stroke-width="1.5" opacity="0.5"/>
+          <line x1="171" y1="136" x2="202" y2="100" stroke="#a78bfa" stroke-width="1.5" opacity="0.5"/>
+          <!-- ラベル -->
+          <text x="40" y="94" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold">入力</text>
+          <text x="220" y="94" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold">出力</text>
+          <!-- パラメータ数 -->
+          <text x="130" y="170" text-anchor="middle" fill="#475569" font-size="9">数十億〜数兆のパラメータ</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ②仕組みフロー -->
+  <div class="card">
+    <div class="section-title">仕組み：テキスト生成の流れ</div>
+    <div class="flow-row">
+
+      <div class="flow-item">
+        <div class="flow-icon">💬</div>
+        <div class="flow-box" style="background:#1e3a5f; border:1.5px solid #3b82f6; color:#93c5fd;">
+          プロンプト入力
+        </div>
+        <div class="flow-label">ユーザーの質問・指示</div>
+      </div>
+
+      <div class="flow-arrow">▶</div>
+
+      <div class="flow-item">
+        <div class="flow-icon">🔤</div>
+        <div class="flow-box" style="background:#2d1b69; border:1.5px solid #8b5cf6; color:#c4b5fd;">
+          トークン化
+        </div>
+        <div class="flow-label">文字→数値IDに変換</div>
+      </div>
+
+      <div class="flow-arrow">▶</div>
+
+      <div class="flow-item">
+        <div class="flow-icon">🧠</div>
+        <div class="flow-box" style="background:#3b1a6b; border:1.5px solid #a855f7; color:#e9d5ff;">
+          Transformer
+        </div>
+        <div class="flow-label">Attentionで文脈理解</div>
+      </div>
+
+      <div class="flow-arrow">▶</div>
+
+      <div class="flow-item">
+        <div class="flow-icon">📊</div>
+        <div class="flow-box" style="background:#4a044e; border:1.5px solid #d946ef; color:#f5d0fe;">
+          確率計算
+        </div>
+        <div class="flow-label">次トークンの確率分布</div>
+      </div>
+
+      <div class="flow-arrow">▶</div>
+
+      <div class="flow-item">
+        <div class="flow-icon">✨</div>
+        <div class="flow-box" style="background:#14532d; border:1.5px solid #22c55e; color:#86efac;">
+          テキスト出力
+        </div>
+        <div class="flow-label">1トークンずつ生成</div>
+      </div>
+
+    </div>
+
+    <!-- トークン説明 -->
+    <div style="margin-top:20px; padding:14px; background:#0f172a; border-radius:10px;">
+      <div style="font-size:clamp(11px,1.8vw,13px); color:#94a3b8; margin-bottom:8px;">🔤 トークン化の例（「東京は晴れ」）</div>
+      <div class="token-row">
+        <span class="token" style="background:#1e293b; border-color:#6366f1; color:#a5b4fc;">東京</span>
+        <span class="token" style="background:#1e293b; border-color:#8b5cf6; color:#c4b5fd;">は</span>
+        <span class="token" style="background:#1e293b; border-color:#a855f7; color:#e9d5ff;">晴れ</span>
+        <span class="tok-arrow">→</span>
+        <span style="font-size:clamp(11px,1.8vw,13px); color:#64748b;">[2841] [12] [5530]</span>
+      </div>
+      <div class="token-note">単語・文字・記号を「トークン」という単位に分割し、数値IDに変換してモデルに入力する</div>
