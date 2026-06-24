@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APIの仕組み</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 16px;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            max-width: 430px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 20px;
+            margin: 16px 0;
+            color: #ffffff;
+        }
+        h2 {
+            font-size: 14px;
+            margin: 12px 0 8px 0;
+            color: #64b5f6;
+            font-weight: 600;
+        }
+        .flow {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 16px 0;
+        }
+        .step {
+            background-color: #2a2a2a;
+            border-left: 4px solid #64b5f6;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .arrow {
+            text-align: center;
+            color: #64b5f6;
+            font-size: 18px;
+            margin: 4px 0;
+        }
+        .example {
+            background-color: #263238;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin: 8px 0;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #455a64;
+        }
+        .key-points {
+            background-color: #1b5e20;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            margin: 12px 0;
+            border-left: 4px solid #81c784;
+        }
+        .key-points li {
+            margin: 6px 0;
+        }
+        .footer {
+            font-size: 11px;
+            color: #666;
+            margin-top: 24px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>APIの仕組み</h1>
+    
+    <h2>🔄 基本フロー</h2>
+    <div class="flow">
+        <div class="step">📱 <strong>リクエスト</strong><br>アプリが「〇〇をください」と依頼</div>
+        <div class="arrow">↓</div>
+        <div class="step">⚙️ <strong>処理</strong><br>サーバーが依頼内容を実行</div>
+        <div class="arrow">↓</div>
+        <div class="step">📤 <strong>レスポンス</strong><br>結果がアプリに返される</div>
+    </div>
+
+    <h2>📌 実例</h2>
+    <div class="example">
+        リクエスト:<br>
+        GET /weather?city=Tokyo<br><br>
+        レスポンス:<br>
+        {temp: 25°C, condition: "晴れ"}
+    </div>
+
+    <h2>✅ 要点</h2>
+    <div class="key-points">
+        <ul style="margin: 0; padding-left: 20px;">
+            <li>異なるアプリ同士の「会話」の約束</li>
+            <li>Webサービス、スマホアプリ、データベース連携で活躍</li>
+            <li>決められた形式でリクエスト→加工→レスポンスを繰り返す</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        詳しい正式版は数十秒後にNotionの図解ログに追加されます
+    </div>
+</body>
+</html>
