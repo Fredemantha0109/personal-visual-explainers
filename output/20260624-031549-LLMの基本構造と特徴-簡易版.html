@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLMの基本構造と特徴</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #e0e0e0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.7;
+      padding: clamp(12px, 5%, 20px);
+    }
+    .container {
+      max-width: clamp(300px, 100%, 900px);
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: clamp(24px, 6vw, 36px);
+      margin-bottom: clamp(20px, 4vw, 30px);
+      text-align: center;
+      color: #64b5f6;
+      font-weight: 700;
+    }
+    .section {
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 4px solid #64b5f6;
+      padding: clamp(12px, 3vw, 20px);
+      margin-bottom: clamp(16px, 3vw, 24px);
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+    }
+    .section h2 {
+      font-size: clamp(16px, 4vw, 22px);
+      color: #81c784;
+      margin-bottom: clamp(10px, 2vw, 14px);
+    }
+    .section p, .section li {
+      font-size: clamp(13px, 2.5vw, 16px);
+      color: #c0c0c0;
+      margin-bottom: 8px;
+    }
+    ul {
+      margin-left: clamp(16px, 3vw, 24px);
+    }
+    li {
+      margin-bottom: 6px;
+    }
+    .flow-box {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(12px, 2vw, 16px);
+      margin: clamp(12px, 2vw, 16px) 0;
+    }
+    .flow-step {
+      background: rgba(100, 181, 246, 0.1);
+      border: 1px solid rgba(100, 181, 246, 0.3);
+      padding: clamp(10px, 2vw, 14px);
+      border-radius: 6px;
+      text-align: center;
+      font-weight: 600;
+      color: #64b5f6;
+      font-size: clamp(12px, 2.3vw, 14px);
+    }
+    .arrow {
+      text-align: center;
+      color: #64b5f6;
+      font-size: clamp(16px, 3vw, 20px);
+      margin: clamp(4px, 1vw, 8px) 0;
+    }
+    .highlight {
+      background: rgba(129, 199, 132, 0.2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #81c784;
+    }
+    .footer {
+      text-align: center;
+      font-size: clamp(11px, 1.8vw, 12px);
+      color: #888;
+      margin-top: clamp(24px, 4vw, 36px);
+      padding-top: clamp(16px, 3vw, 20px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🤖 LLM(大規模言語モデル)</h1>
+
+    <div class="section">
+      <h2>LLMとは</h2>
+      <p>膨大なテキストデータを学習した<span class="highlight">確率的な予測機械</span>。ChatGPT、Claude、Geminiなどがこれに該当します。</p>
+    </div>
+
+    <div class="section">
+      <h2>📊 学習の流れ</h2>
+      <div class="flow-box">
+        <div class="flow-step">① インターネット上の数兆個のテキストを学習</div>
+        <div class="arrow">↓</div>
+        <div class="flow-step">② パターン・文法・知識を統計的に習得</div>
+        <div class="arrow">↓</div>
+        <div class="flow-step">③ ユーザーの入力に対し、確率的に次の単語を予測</div>
+        <div class="arrow">↓</div>
+        <div class="flow-step">④ 予測を繰り返して文章を生成</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>⚡ LLMの特徴</h2>
+      <ul>
+        <li><strong>パラメータ数：</strong> 数十億〜数千億個の重み（学習データから抽出した規則性）</li>
+        <li><strong>Transformer構造：</strong> 注意機構で文脈を理解し、遠く離れた単語同士の関係も把握</li>
+        <li><strong>汎用性：</strong> 翻訳・要約・コード生成・Q&Aなど多様なタスクに対応</li>
+        <li><strong>限界：</strong> 確率的予測のため、ときどき間違う（幻覚現象）</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>💡 活用例</h2>
+      <ul>
+        <li>チャットボット（問い合わせ対応）</li>
+        <li>文書作成補助・要約</li>
+        <li>プログラミングサポート</li>
+        <li>企業の定型業務の自動化</li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      詳しい正式版は1〜2分後にNotionの図解ログに追加されます
+    </div>
+  </div>
+</body>
+</html>
