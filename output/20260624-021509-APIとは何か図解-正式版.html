@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APIとは何か図解</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
+    background: #f0f4f8;
+    color: #1a2233;
+    min-height: 100vh;
+  }
+
+  .page-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: clamp(16px, 4vw, 48px) clamp(12px, 3vw, 40px);
+  }
+
+  h1 {
+    text-align: center;
+    font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+    font-weight: 900;
+    color: #1a2233;
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    color: #5a6a85;
+    margin-bottom: clamp(20px, 4vw, 40px);
+  }
+
+  /* セクションタイトル */
+  .section-title {
+    font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+    font-weight: 800;
+    color: #3a4a6b;
+    margin-bottom: 14px;
+    padding-left: 10px;
+    border-left: 4px solid #4f80e1;
+  }
+
+  /* カード共通 */
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: clamp(16px, 3vw, 28px);
+    box-shadow: 0 2px 12px rgba(60,80,140,0.09);
+    margin-bottom: clamp(18px, 3vw, 30px);
+  }
+
+  /* ─── 1. 概念図：レストランの例 ─── */
+  .analogy-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    padding: clamp(8px,2vw,16px) 0;
+  }
+  .actor-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 90px;
+  }
+  .actor-icon {
+    width: clamp(52px,8vw,74px);
+    height: clamp(52px,8vw,74px);
+  }
+  .actor-label {
+    font-size: clamp(0.72rem, 1.8vw, 0.9rem);
+    font-weight: 700;
+    text-align: center;
+    color: #2a3550;
+  }
+  .actor-sub {
+    font-size: clamp(0.6rem, 1.4vw, 0.75rem);
+    color: #7a8aaa;
+    text-align: center;
+    margin-top: -4px;
+  }
+  .arrow-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 clamp(6px,2vw,18px);
+    min-width: 80px;
+  }
+  .arrow-label {
+    font-size: clamp(0.6rem, 1.4vw, 0.78rem);
+    color: #fff;
+    background: #4f80e1;
+    border-radius: 20px;
+    padding: 3px 10px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    font-weight: 700;
+  }
+  .arrow-label.res {
+    background: #34c07a;
+  }
+  .arrow-svg {
+    width: clamp(40px,7vw,70px);
+    height: 20px;
+  }
+
+  /* ─── 2. フロー図 ─── */
+  .flow-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    align-items: stretch;
+  }
+  .flow-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 12px 0;
+    position: relative;
+  }
+  .flow-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 21px;
+    top: 52px;
+    width: 2px;
+    height: calc(100% - 38px);
+    background: linear-gradient(to bottom, #4f80e1, #a0c0ff);
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #fff;
+    background: linear-gradient(135deg, #4f80e1, #7aa7f7);
+    box-shadow: 0 2px 8px rgba(79,128,225,0.3);
+    z-index: 1;
+  }
+  .step-body {
+    flex: 1;
+    padding-top: 4px;
+  }
+  .step-title {
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    font-weight: 800;
+    color: #1a2233;
+    margin-bottom: 2px;
+  }
+  .step-desc {
+    font-size: clamp(0.72rem, 1.6vw, 0.85rem);
+    color: #5a6a85;
+    line-height: 1.6;
+  }
+  .step-code {
+    display: inline-block;
+    background: #eef2ff;
+    color: #3355cc;
+    font-family: 'Courier New', monospace;
+    font-size: clamp(0.65rem, 1.4vw, 0.78rem);
+    border-radius: 6px;
+    padding: 2px 8px;
+    margin-top: 4px;
+    border: 1px solid #c8d5fa;
+  }
+
+  /* ─── 3. 用途グリッド ─── */
+  .use-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 180px), 1fr));
+    gap: clamp(10px, 2vw, 16px);
+  }
+  .use-item {
+    background: #f5f8ff;
+    border-radius: 10px;
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    border: 1.5px solid #dce6f8;
+  }
+  .use-icon-wrap {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+  }
+  .use-name {
+    font-size: clamp(0.78rem, 1.8vw, 0.9rem);
+    font-weight: 800;
+    color: #1a2233;
+  }
+  .use-desc {
+    font-size: clamp(0.65rem, 1.4vw, 0.78rem);
+    color: #5a6a85;
+    line-height: 1.5;
+  }
+
+  /* ─── 4. RESTとは ─── */
+  .rest-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr));
+    gap: clamp(8px, 2vw, 14px);
+  }
+  .method-badge {
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .method-name {
+    font-family: 'Courier New', monospace;
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    font-weight: 900;
+    letter-spacing: 0.05em;
+  }
+  .method-desc {
+    font-size: clamp(0.65rem, 1.4vw, 0.78rem);
+    font-weight: 600;
+    color: #2a3550;
+  }
+  .method-ex {
+    font-size: clamp(0.6rem, 1.3vw, 0.72rem);
+    color: #5a6a85;
+  }
+
+  /* ─── 5. ポイントまとめ ─── */
+  .point-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eef1f7;
+  }
+  .point-row:last-child { border-bottom: none; }
+  .point-icon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .point-text {
+    font-size: clamp(0.78rem, 1.8vw, 0.92rem);
+    color: #2a3550;
+    line-height: 1.65;
+  }
+  .point-text strong { color: #3355cc; }
+
+  @media (max-width: 520px) {
+    .analogy-wrap { flex-direction: column; gap: 8px; }
+    .arrow-block { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <h1>🔌 APIとは何か</h1>
+  <p class="subtitle">Application Programming Interface — ソフトウェア同士をつなぐ「取り決め」</p>
+
+  <!-- ① わかりやすい例え -->
+  <div class="card">
+    <div class="section-title">① レストランで例えると…</div>
+    <div class="analogy-wrap">
+      <!-- お客さん -->
+      <div class="actor-box">
+        <svg class="actor-icon" viewBox="0 0 74 74" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="74" height="74" rx="18" fill="#e8f0ff"/>
+          <circle cx="37" cy="26" r="11" fill="#4f80e1"/>
+          <rect x="18" y="42" width="38" height="20" rx="10" fill="#4f80e1"/>
+          <text x="37" y="68" font-size="9" fill="#4f80e1" text-anchor="middle" font-weight="bold"></text>
+        </svg>
+        <div class="actor-label">アプリ<br>(お客さん)</div>
+        <div class="actor-sub">注文する側</div>
+      </div>
+      <!-- 矢印1 -->
+      <div class="arrow-block">
+        <div class="arrow-label">リクエスト</div>
+        <svg class="arrow-svg" viewBox="0 0 70 20"><defs><marker id="ah1" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><polygon points="0 0,7 3.5,0 7" fill="#4f80e1"/></marker></defs><line x1="2" y1="10" x2="62" y2="10" stroke="#4f80e1" stroke-width="2.5" marker-end="url(#ah1)"/></svg>
+        <div style="font-size:0.62rem;color:#aab;margin-top:2px;">「〇〇をください」</div>
+      </div>
+      <!-- API -->
+      <div class="actor-box">
+        <svg class="actor-icon" viewBox="0 0 74 74" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="74" height="74" rx="18" fill="#fff7e0"/>
+          <rect x="12" y="20" width="50" height="34" rx="7" fill="#f7a827"/>
+          <rect x="19" y="28" width="14" height="5" rx="2.5" fill="#fff" opacity="0.9"/>
+          <rect x="19" y="37" width="22" height="5" rx="2.5" fill="#fff" opacity="0.9"/>
+          <rect x="41" y="28" width="14" height="14" rx="3" fill="#fff" opacity="0.7"/>
+          <text x="48" y="39" font-size="9" fill="#f7a827" text-anchor="middle" font-weight="bold">API</text>
+          <rect x="30" y="54" width="14" height="7" rx="3" fill="#f7a827"/>
+        </svg>
+        <div class="actor-label">API<br>(ウェイター)</div>
+        <div class="actor-sub">橋渡し役</div>
+      </div>
+      <!-- 矢印2 -->
+      <div class="arrow-block">
+        <div class="arrow-label">リクエスト</div>
+        <svg class="arrow-svg" viewBox="0 0 70 20"><defs><marker id="ah2" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><polygon points="0 0,7 3.5,0 7" fill="#f7a827"/></marker></defs><line x1="2" y1="10" x2="62" y2="10" stroke="#f7a827" stroke-width="2.5" marker-end="url(#ah2)"/></svg>
+        <div style="font-size:0.62rem;color:#aab;margin-top:2px;">キッチンへ伝える</div>
+      </div>
+      <!-- サーバー -->
+      <div class="actor-box">
+        <svg class="actor-icon" viewBox="0 0 74 74" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="74" height="74" rx="18" fill="#e6faf2"/>
+          <rect x="12" y="16" width="50" height="14" rx="4" fill="#34c07a"/>
+          <rect x="12" y="34" width="50" height="14" rx="4" fill="#34c07a"/>
+          <rect x="12" y="52" width="50" height="8" rx="4" fill="#b2efd4"/>
+          <circle cx="55" cy="23" r="3" fill="#fff" opacity="0.8"/>
+          <circle cx="55" cy="41" r="3" fill="#fff" opacity="0.8"/>
+        </svg>
+        <div class="actor-label">サーバー<br>(キッチン)</div>
+        <div class="actor-sub">データを持つ側</div>
+      </div>
+    </div>
+    <!-- 返答の矢印（下段） -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-top:10px;flex-wrap:wrap;">
+      <div style="min-width:90px;"></div>
+      <div class="arrow-block" style="transform:scaleX(-1);">
+        <svg class="arrow-svg" viewBox="0 0 70 20"><defs><marker id="ah3" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><polygon points="0 0,7 3.5,0 7" fill="#34c07a"/></marker></defs><line x1="2" y1="10" x2="62" y2="10" stroke="#34c07a" stroke-width="2.5" marker-end="url(#ah3)"/></svg>
+        <div class="arrow-label res" style="transform:scaleX(-1);">レスポンス</div>
+      </div>
+      <div style="min-width:90px;"></div>
+      <div class="arrow-block" style="transform:scaleX(-1);">
+        <svg class="arrow-svg" viewBox="0 0 70 20"><defs><marker id="ah4" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><polygon points="0 0,7 3.5,0 7" fill="#34c07a"/></marker></defs><line x1="2" y1="10" x2="62" y2="10" stroke="#34c07a" stroke-width="2.5" marker-end="url(#ah4)"/></svg>
+        <div class="arrow-label res" style="transform:scaleX(-1);">レスポンス</div>
+      </div>
+      <div style="min-width:90px;"></div>
+    </div>
+    <p style="text-align:center;font-size:clamp(0.68rem,1.5vw,0.8rem);color:#7a8aaa;margin-top:8px;">APIは「お客さん(アプリ)」と「キッチン(サーバー)」の間で注文を取り次ぐウェイター役</p>
+  </div>
+
+  <!-- ② 通信の流れ -->
+  <div class="card">
+    <div class="section-title">② API通信の流れ（4ステップ）</div>
+    <div class="flow-wrap">
+      <div class="flow-step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">アプリがリクエストを送る</div>
+          <div class="step-desc">「天気を教えて」「ユーザー情報をください」など、必要なデータや操作を要求する。</div>
+          <span class="step-code">GET https://api.example.com/weather?city=tokyo</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">APIがリクエストを受け取る</div>
+          <div class="step-desc">「誰が」「何を」「どんな権限で」求めているかをチェック（認証・バリデーション）。</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">サーバーがデータを処理・返却</div>
+          <div class="step-desc">データベースを検索・計算して結果を用意する。</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">アプリがレスポンスを受け取る</div>
+          <div class="step-desc">主にJSON形式でデータが返り、アプリが画面に表示する。</div>
+          <span class="step-code">{ "city": "tokyo", "temp": 28, "weather": "晴れ" }</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ REST APIのメソッド -->
+  <div class="card">
+    <div class="section-title">③ REST API — 4つの基本操作</div>
+    <div class="rest-grid">
+      <div class="method-badge" style="background:#e8f0ff;border:2px solid #4f80e1;">
+        <div class="method-name" style="color:#4f80e1;">GET</div>
+        <div class="method-desc">データを取得</div>
+        <div class="method-ex">例）商品一覧を読み込む</div>
+      </div>
+      <div class="method-badge" style="background:#e8fff4;border:2px solid #34c07a;">
+        <div class="method-name" style="color:#34c07a;">POST</div>
+        <div class="method-desc">データを新規作成</div>
+        <div class="method-ex">例）新規ユーザーを登録する</div>
+      </div>
+      <div class="method-badge" style="background:#fff8e0;border:2px solid #f7a827;">
+        <div class="method-name" style="color:#f7a827;">PUT</div>
+        <div class="method-desc">データを更新</div>
+        <div class="method-ex">例）プロフィールを変更する</div>
+      </div>
+      <div class="method-badge" style="background:#fff0f0;border:2px solid #e05a5a;">
+        <div class="method-name" style="color:#e05a5a;">DELETE</div>
+        <div class="method-desc">データを削除</div>
+        <div class="method-ex">例）投稿を削除する</div>
+      </div>
+    </div>
+    <p style="font-size:clamp(0.65rem,1.4vw,0.78rem);color:#7a8aaa;margin-top:12px;">これら4つで「作る・読む・更新・削除」= <strong style="color:#3355cc;">CRUD</strong> 操作を表現する</p>
+  </div>
+
+  <!-- ④ 活用例 -->
+  <div class="card">
+    <div class="section-title">④ 身近なAPI活用例</div>
+    <div class="use-grid">
+      <div class="use-item">
+        <div class="use-icon-wrap" style="background:#e8f0ff;">🗺️</div>
+        <div class="use-name">地図アプリ</div>
+        <div class="use-desc">Googleマップ APIで地図・経路を表示</div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon-wrap" style="background:#fff7e0;">💳</div>
+        <div class="use-name">決済</div>
+        <div class="use-desc">Stripe/PayPay APIでカード決済を処理</div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon-wrap" style="background:#e8fff4;">🔑</div>
+        <div class="use-name">ログイン</div>
+        <div class="use-desc">GoogleログインAPIでSNS認証を実現</div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon-wrap" style="background:#fdedf0;">🤖</div>
+        <div class="use-name">AI機能</div>
+        <div class="use-desc">OpenAI APIでChatGPTをアプリに組み込む</div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon-wrap" style="background:#f0ebff;">📦</div>
+        <div class="use-name">配送追跡</div>
+        <div class="use-desc">配送会社のAPIで荷物状況を取得</div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon-wrap" style="background:#e0f7ff;">🌤️</div>
+        <div class="use-name">天気</div>
+        <div class="use-desc">天気APIで現在地の天候データを表示</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ まとめ -->
+  <div class="card">
+    <div class="section-title">⑤ APIのポイントまとめ</div>
+    <div class="point-row">
+      <div class="point-icon">🔌</div>
+      <div class="point-text"><strong>接続口の標準化</strong>：内部の複雑な仕組みを隠し、決まった形式でやり取りできるようにする</div>
+    </div>
+    <div class="point-row">
+      <div class="point-icon">♻️</div>
+      <div class="point-text"><strong>再利用性</strong>：一度作ったAPIは複数のアプリ（Web・スマホ等）から使い回せる</div>
+    </div>
+    <div class="point-row">
+      <div class="point-icon">🔒</div>
+      <div class="point-text"><strong>セキュリティ</strong>：APIキーやトークンで「許可された人だけ」がアクセスできるよう制御する</div>
+    </div>
+    <div class="point-row">
+      <div class="point-icon">⚡</div>
+      <div class="point-text"><strong>開発効率</strong>：地図・決済・AIなど高機能を<strong>ゼロから作らず</strong>すぐに使える</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
