@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Next.js そもそも論</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: clamp(16px, 4vw, 40px) clamp(12px, 4vw, 24px);
+  }
+
+  .wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ヘッダー */
+  .hero {
+    text-align: center;
+    margin-bottom: clamp(32px, 5vw, 56px);
+    padding: clamp(24px, 4vw, 48px) 20px;
+    background: linear-gradient(135deg, #1a1f2e 0%, #1e293b 100%);
+    border-radius: 20px;
+    border: 1px solid #2d3748;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(99,179,237,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .logo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #000;
+    color: #fff;
+    border-radius: 12px;
+    padding: 8px 18px;
+    font-size: clamp(14px, 3vw, 18px);
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+  .logo-badge span { color: #63b3ed; }
+  .hero h1 {
+    font-size: clamp(20px, 5vw, 36px);
+    font-weight: 800;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  .hero p {
+    font-size: clamp(13px, 2.5vw, 16px);
+    color: #94a3b8;
+    line-height: 1.7;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* セクションラベル */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: clamp(14px, 2vw, 20px);
+  }
+  .section-label .num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: #3b82f6;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800; flex-shrink: 0;
+  }
+  .section-label h2 {
+    font-size: clamp(16px, 3vw, 22px);
+    font-weight: 800;
+    color: #e2e8f0;
+  }
+
+  .section { margin-bottom: clamp(28px, 4vw, 48px); }
+
+  /* Q&A カード */
+  .qa-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: clamp(16px, 3vw, 28px);
+    margin-bottom: 16px;
+  }
+  .q-label {
+    display: inline-block;
+    background: #3b82f6;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .a-label {
+    display: inline-block;
+    background: #10b981;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .qa-q { font-size: clamp(15px, 2.5vw, 18px); font-weight: 700; margin-bottom: 12px; color: #e2e8f0; }
+  .qa-a { font-size: clamp(13px, 2vw, 15px); color: #94a3b8; line-height: 1.7; }
+  .qa-a strong { color: #63b3ed; }
+
+  /* 比較ブロック */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 12px;
+  }
+  .compare-card {
+    background: #1e293b;
+    border-radius: 14px;
+    padding: clamp(14px, 2.5vw, 22px);
+    border: 2px solid transparent;
+  }
+  .compare-card.bad { border-color: #ef4444; }
+  .compare-card.good { border-color: #10b981; }
+  .compare-card .tag {
+    font-size: 11px; font-weight: 800; padding: 3px 10px;
+    border-radius: 20px; display: inline-block; margin-bottom: 10px;
+    letter-spacing: 1px;
+  }
+  .bad .tag { background: #ef4444; color: #fff; }
+  .good .tag { background: #10b981; color: #fff; }
+  .compare-card h3 { font-size: clamp(14px, 2.5vw, 17px); font-weight: 800; margin-bottom: 8px; }
+  .compare-card p { font-size: clamp(12px, 2vw, 14px); color: #94a3b8; line-height: 1.6; }
+
+  /* SVG フロー */
+  .svg-wrap {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: clamp(16px, 3vw, 28px);
+    overflow-x: auto;
+  }
+  .svg-wrap svg { display: block; margin: 0 auto; }
+
+  /* 機能カード */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .feat-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 14px;
+    padding: clamp(14px, 2.5vw, 20px);
+  }
+  .feat-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  .feat-card h3 { font-size: clamp(13px, 2.2vw, 16px); font-weight: 800; margin-bottom: 6px; }
+  .feat-card p { font-size: clamp(11px, 1.8vw, 13px); color: #94a3b8; line-height: 1.6; }
+  .feat-card .abbr { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; display: inline-block; margin-bottom: 8px; }
+
+  /* ひとこと説明 */
+  .one-liner {
+    background: linear-gradient(135deg, #1a1f2e, #1e2a3a);
+    border: 2px solid #3b82f6;
+    border-radius: 16px;
+    padding: clamp(18px, 3vw, 30px);
+    text-align: center;
+  }
+  .one-liner .title { font-size: 12px; color: #63b3ed; font-weight: 700; letter-spacing: 2px; margin-bottom: 10px; }
+  .one-liner .text { font-size: clamp(15px, 3vw, 20px); font-weight: 800; line-height: 1.6; color: #e2e8f0; }
+  .one-liner .sub { font-size: clamp(11px, 2vw, 14px); color: #64748b; margin-top: 8px; line-height: 1.6; }
+
+  /* ステップ */
+  .step-list { display: flex; flex-direction: column; gap: 0; }
+  .step-item {
+    display: flex;
+    gap: 16px;
+    position: relative;
+  }
+  .step-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .step-dot {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: #3b82f6;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+  .step-bar {
+    width: 2px;
+    flex: 1;
+    background: #334155;
+    margin: 4px 0;
+    min-height: 20px;
+  }
+  .step-content {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: clamp(12px, 2vw, 18px);
+    flex: 1;
+    margin-bottom: 12px;
+  }
+  .step-content h3 { font-size: clamp(13px, 2.2vw, 16px); font-weight: 800; margin-bottom: 4px; color: #e2e8f0; }
+  .step-content p { font-size: clamp(11px, 1.8vw, 13px); color: #94a3b8; line-height: 1.6; }
+  .step-content code {
+    display: inline-block;
+    background: #0f1117;
+    color: #63b3ed;
+    font-family: monospace;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- ヘッダー -->
+  <div class="hero">
+    <div class="logo-badge">Next<span>.js</span></div>
+    <h1>Next.jsって、そもそも何者？</h1>
+    <p>「Reactでは足りないの？」という疑問から始まり、<br>何ができて、どう動くかまで。人に説明できるレベルに。</p>
+  </div>
+
+  <!-- Q1: そもそも何者？ -->
+  <div class="section">
+    <div class="section-label">
+      <div class="num">1</div>
+      <h2>そもそもNext.jsって何者？</h2>
+    </div>
+    <div class="qa-card">
+      <div class="q-label">Q</div>
+      <div class="qa-q">Reactとどう違うの？</div>
+      <div class="a-label">A</div>
+      <div class="qa-a">
+        Reactは「<strong>UIを作るためのライブラリ</strong>」。画面のパーツを作ることに特化しています。<br>
+        一方Next.jsは、Reactを土台に「<strong>Webサービス全体を作るフレームワーク</strong>」です。<br><br>
+        <strong>料理に例えると：</strong><br>
+        React ＝ 包丁（部品を切り出す道具）<br>
+        Next.js ＝ キッチン全体（調理台・冷蔵庫・レンジまで揃っている）
+      </div>
+    </div>
+
+    <!-- 図: React vs Next.js -->
+    <div class="compare-grid">
+      <div class="compare-card bad">
+        <span class="tag">React だけ</span>
+        <h3>⚛️ Reactのみ</h3>
+        <p>・UIの描画だけ<br>・ルーティング（画面遷移）は自分で設定<br>・SEOが弱い（最初にHTMLが空）<br>・パフォーマンス最適化も自前</p>
+      </div>
+      <div class="compare-card good">
+        <span class="tag">Next.js</span>
+        <h3>▲ Next.js（React入り）</h3>
+        <p>・ファイルを置くだけでルーティング完成<br>・SEOに強いHTML生成が選べる<br>・画像最適化・キャッシュ自動対応<br>・バックエンドAPIも同じプロジェクト内に</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q2: なぜ必要？ -->
+  <div class="section">
+    <div class="section-label">
+      <div class="num">2</div>
+      <h2>なぜNext.jsが必要になったの？</h2>
+    </div>
+    <div class="svg-wrap">
+      <svg viewBox="0 0 720 220" width="100%" style="max-width:720px; min-width:300px;">
+        <!-- 問題 -->
+        <rect x="10" y="20" width="200" height="80" rx="12" fill="#1a1f2e" stroke="#ef4444" stroke-width="2"/>
+        <text x="110" y="48" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">❌ Reactだけの問題</text>
+        <text x="110" y="66" text-anchor="middle" fill="#94a3b8" font-size="10">検索エンジンに</text>
+        <text x="110" y="80" text-anchor="middle" fill="#94a3b8" font-size="10">読んでもらえない</text>
+        <text x="110" y="94" text-anchor="middle" fill="#94a3b8" font-size="10">（空のHTMLを返す）</text>
+
+        <!-- 矢印1 -->
+        <line x1="215" y1="60" x2="255" y2="60" stroke="#475569" stroke-width="2" marker-end="url(#arr)"/>
+        <text x="235" y="52" text-anchor="middle" fill="#64748b" font-size="9">原因</text>
+
+        <!-- 原因 -->
+        <rect x="258" y="20" width="200" height="80" rx="12" fill="#1a1f2e" stroke="#f59e0b" stroke-width="2"/>
+        <text x="358" y="48" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">⚠ CSR の限界</text>
+        <text x="358" y="66" text-anchor="middle" fill="#94a3b8" font-size="10">ブラウザ側で</text>
+        <text x="358" y="80" text-anchor="middle" fill="#94a3b8" font-size="10">JavaScriptを実行して</text>
+        <text x="358" y="94" text-anchor="middle" fill="#94a3b8" font-size="10">初めてHTMLが完成する</text>
+
+        <!-- 矢印2 -->
+        <line x1="463" y1="60" x2="503" y2="60" stroke="#475569" stroke-width="2" marker-end="url(#arr)"/>
+        <text x="483" y="52" text-anchor="middle" fill="#64748b" font-size="9">解決</text>
+
+        <!-- 解決 -->
+        <rect x="506" y="20" width="200" height="80" rx="12" fill="#1a1f2e" stroke="#10b981" stroke-width="2"/>
+        <text x="606" y="48" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">✅ Next.jsの登場</text>
+        <text x="606" y="66" text-anchor="middle" fill="#94a3b8" font-size="10">サーバー側で先に</text>
+        <text x="606" y="80" text-anchor="middle" fill="#94a3b8" font-size="10">HTMLを作ってから</text>
+        <text x="606" y="94" text-anchor="middle" fill="#94a3b8" font-size="10">ブラウザに送る</text>
+
+        <!-- 下段ラベル -->
+        <text x="110" y="140" text-anchor="middle" fill="#64748b" font-size="10">Googleボットが読めない</text>
+        <text x="110" y="154" text-anchor="middle" fill="#64748b" font-size="10">→ SEO圏外になる</text>
+
+        <text x="358" y="140" text-anchor="middle" fill="#64748b" font-size="10">Client Side Rendering</text>
+        <text x="358" y="154" text-anchor="middle" fill="#64748b" font-size="10">クライアント側レンダリング</text>
+
+        <text x="606" y="140" text-anchor="middle" fill="#10b981" font-size="10">SSR / SSG を選べる</text>
+        <text x="606" y="154" text-anchor="middle" fill="#10b981" font-size="10">→ 高速 ＆ SEO強い</text>
+
+        <!-- 矢印マーカー -->
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#475569"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Q3: 一番大事な概念 レンダリング -->
+  <div class="section">
+    <div class="section-label">
+      <div class="num">3</div>
+      <h2>最重要概念：レンダリング方式の違い</h2>
+    </div>
+    <div class="svg-wrap">
+      <svg viewBox="0 0 740 310" width="100%" style="max-width:740px; min-width:300px;">
+        <defs>
+          <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#475569"/>
+          </marker>
+        </defs>
+
+        <!-- CSR -->
+        <rect x="10" y="10" width="220" height="270" rx="14" fill="#1a1f2e" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="120" y="36" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">CSR（Reactのみ）</text>
+        <text x="120" y="52" text-anchor="middle" fill="#64748b" font-size="10">Client Side Rendering</text>
+
+        <rect x="30" y="62" width="80" height="28" rx="7" fill="#0f1117" stroke="#334155"/>
+        <text x="70" y="81" text-anchor="middle" fill="#94a3b8" font-size="10">ブラウザ</text>
+        <line x1="110" y1="76" x2="150" y2="76" stroke="#475569" stroke-width="1.5" marker-end="url(#arr2)"/>
+        <rect x="150" y="62" width="68" height="28" rx="7" fill="#0f1117" stroke="#334155"/>
+        <text x="184" y="81" text-anchor="middle" fill="#94a3b8" font-size="10">空HTML</text>
+
+        <text x="120" y="108" text-anchor="middle" fill="#64748b" font-size="10">↓ JSダウンロード</text>
+        <text x="120" y="122" text-anchor="middle" fill="#64748b" font-size="10">↓ JS実行</text>
+        <text x="120" y="136" text-anchor="middle" fill="#64748b" font-size="10">↓ やっと画面が表示</text>
+
+        <rect x="30" y="150" width="170" height="36" rx="8" fill="#7f1d1d" stroke="#ef4444" stroke-width="1"/>
+        <text x="115" y="171" text-anchor="middle" fill="#fca5a5" font-size="10" font-weight="bold">表示が遅い・SEO弱い</text>
+
+        <text x="120" y="210" text-anchor="middle" fill="#64748b" font-size="10">📌 向いている用途</text>
+        <text x="120" y="226" text-anchor="middle" fill="#94a3b8" font-size="10">管理画面・社内ツール</text>
+        <text x="120" y="242" text-anchor="middle" fill="#94a3b8" font-size="10">（SEO不要な場合）</text>
+
+        <!-- SSR -->
+        <rect x="260" y="10" width="220" height="270" rx="14" fill="#1a1f2e" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="370" y="36" text-anchor="middle" fill="#3b82f6" font-size="12" font-weight="bold">SSR</text>
+        <text x="370" y="52" text-anchor="middle" fill="#64748b" font-size="10">Server Side Rendering</text>
+
+        <rect x="278" y="62" width="80" height="28" rx="7" fill="#0f1117" stroke="#334155"/>
+        <text x="318" y="81" text-anchor="middle" fill="#94a3b8" font-size="10">ブラウザ</text>
+        <line x1="358" y1="76" x2="398" y2="76" stroke="#475569" stroke-width="1.5" marker-end="url(#arr2)"/>
+        <rect x="398" y="62" width="68" height="28" rx="7" fill="#0f1117" stroke="#334155"/>
+        <text x="432" y="81" text-anchor="middle" fill="#94a3b8" font-size="10">サーバー</text>
+
+        <text x="370" y="108" text-anchor="middle" fill="#64748b" font-size="10">↓ サーバーがHTMLを作成</text>
+        <text x="370" y="122" text-anchor="middle" fill="#64748b" font-size="10">↓ 完成したHTMLを送信</text>
+        <text x="370" y="136" text-anchor="middle" fill="#64748b" font-size="10">↓ 即座に表示</text>
+
+        <rect x="278" y="150" width="170" height="36" rx="8" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1"/>
+        <text x="363" y="171" text-anchor="middle" fill="#93c5fd" font-size="10" font-weight="bold">リクエストごとに最新HTML</text>
+
+        <text x="370" y="210" text-anchor="middle" fill="#64748b" font-size="10">📌 向いている用途</text>
+        <text x="370" y="226" text-anchor="middle" fill="#94a3b8" font-size="10">ニュース・ECサイト</text>
+        <text x="370" y="242" text-anchor="middle" fill="#94a3b8" font-size="10">（常に最新データが必要）</text>
+
+        <!-- SSG -->
+        <rect x="510" y="10" width="220" height="270" rx="14" fill="#1a1f2e" stroke="#10b981" stroke-width="1.5"/>
+        <text x="620" y="36" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">SSG</text>
+        <text x="620" y="52" text-anchor="middle" fill="#64748b" font-size="10">Static Site Generation</text>
+
+        <rect x="528" y="62" width="80" height="28" rx="7" fill="#0f1117" stroke="#334155"/>
+        <text x="568" y="81" text-anchor="middle" fill="#94a3b8" font-size="10">ビルド時</text>
+        <line x1="608" y1="76" x2="648" y2="76" stroke="#475569" stroke-width="1.5" marker-end="url(#arr2)"/>
+        <rect x="648" y="62" width="68" height="28" rx="7" fill="#0f1117" stroke="#334155"/>
+        <text x="682" y="81" text-anchor="middle" fill="#94a3b8" font-size="10">HTML生成</text>
+
+        <text x="620" y="108" text-anchor="middle" fill="#64748b" font-size="10">↓ あらかじめ全HTMLを作る</text>
+        <text x="620" y="122" text-anchor="middle" fill="#64748b" font-size="10">↓ CDNに配置</text>
+        <text x="620" y="136" text-anchor="middle" fill="#64748b" font-size="10">↓ 爆速で表示</text>
+
+        <rect x="528" y="150" width="170" height="36" rx="8" fill="#064e3b" stroke="#10b981" stroke-width="1"/>
+        <text x="613" y="171" text-anchor="middle" fill="#6ee7b7" font-size="10" font-weight="bold">最速・最強SEO・無料運用可</text>
+
+        <text x="620" y="210" text-anchor="middle" fill="#64748b" font-size="10">📌 向いている用途</text>
+        <text x="620" y="226" text-anchor="middle" fill="#94a3b8" font-size="10">ブログ・LP・ドキュメント</text>
+        <text x="620" y="242" text-anchor="middle" fill="#94a3b8" font-size="10">（更新頻度が低いもの）</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Q4: 主な機能 -->
+  <div class="section">
+    <div class="section-label">
+      <div class="num">4</div>
+      <h2>Next.jsが「最初から」持っている機能</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#1e3a5f;">📁</div>
+        <div class="abbr" style="background:#3b82f6;color:#fff;">ファイルルーティング</div>
+        <h3>ファイルを置くだけで画面ができる</h3>
+        <p><code>pages/about.js</code> を作るだけで <code>/about</code> のURLが自動で完成。設定不要。</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#1a2e1a;">🖼</div>
+        <div class="abbr" style="background:#10b981;color:#fff;">Image最適化</div>
+        <h3>画像を自動で最適化</h3>
+        <p>サイズ圧縮・WebP変換・遅延読み込みを自動対応。表示速度が上がる。</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#2e1a1a;">🔌</div>
+        <div class="abbr" style="background:#ef4444;color:#fff;">API Routes</div>
+        <h3>バックエンドAPIも同一プロジェクト</h3>
+        <p><code>pages/api/hello.js</code> だけでAPIエンドポイントが完成。サーバー分離不要。</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#1e1a2e;">⚡</div>
+        <div class="abbr" style="background:#8b5cf6;color:#fff;">Server Components</div>
+        <h3>サーバーで動くRe
