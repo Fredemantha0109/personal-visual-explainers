@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Projects 図解</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
+    background: #f0f4f8;
+    color: #1a202c;
+    padding: clamp(16px, 4vw, 40px);
+    line-height: 1.6;
+  }
+
+  .wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ヘッダー */
+  .header {
+    text-align: center;
+    margin-bottom: clamp(24px, 4vw, 48px);
+  }
+  .header h1 {
+    font-size: clamp(20px, 4vw, 32px);
+    font-weight: 800;
+    color: #2d3748;
+  }
+  .header p {
+    font-size: clamp(13px, 2vw, 16px);
+    color: #718096;
+    margin-top: 6px;
+  }
+
+  /* セクションラベル */
+  .section-label {
+    font-size: clamp(11px, 1.8vw, 13px);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #a0aec0;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  /* ===== 比較セクション（通常 vs Projects）===== */
+  .compare-section {
+    margin-bottom: clamp(28px, 5vw, 56px);
+  }
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 12px;
+    align-items: center;
+  }
+  @media (max-width: 600px) {
+    .compare-grid {
+      grid-template-columns: 1fr;
+    }
+    .compare-arrow { transform: rotate(90deg); }
+  }
+
+  .compare-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: clamp(16px, 3vw, 28px);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .compare-card.before {
+    border-top: 4px solid #fc8181;
+  }
+  .compare-card.after {
+    border-top: 4px solid #68d391;
+  }
+  .compare-card h3 {
+    font-size: clamp(14px, 2.2vw, 17px);
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .compare-card.before h3 { color: #c53030; }
+  .compare-card.after h3 { color: #276749; }
+
+  .chat-bubble {
+    background: #f7fafc;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: clamp(11px, 1.7vw, 13px);
+    color: #4a5568;
+    margin-bottom: 8px;
+    border-left: 3px solid #e2e8f0;
+  }
+  .chat-bubble.highlight {
+    background: #fff5f5;
+    border-left-color: #fc8181;
+    color: #742a2a;
+  }
+  .chat-bubble.ok {
+    background: #f0fff4;
+    border-left-color: #68d391;
+    color: #22543d;
+  }
+
+  .compare-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #a0aec0;
+  }
+
+  /* ===== 棚の構造図 ===== */
+  .structure-section {
+    margin-bottom: clamp(28px, 5vw, 56px);
+  }
+
+  .shelf-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: clamp(20px, 4vw, 36px);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    border: 2px solid #e9d8fd;
+  }
+  .shelf-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .shelf-title .icon {
+    font-size: 28px;
+  }
+  .shelf-title h2 {
+    font-size: clamp(16px, 3vw, 22px);
+    font-weight: 800;
+    color: #6b21a8;
+  }
+
+  .shelf-contents {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .shelf-item {
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .shelf-item.files {
+    background: #ebf8ff;
+    border: 1.5px solid #90cdf4;
+  }
+  .shelf-item.instructions {
+    background: #fef9c3;
+    border: 1.5px solid #f6e05e;
+  }
+  .shelf-item.memory {
+    background: #f0fff4;
+    border: 1.5px solid #9ae6b4;
+  }
+  .shelf-item h4 {
+    font-size: clamp(13px, 2vw, 15px);
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .shelf-item.files h4 { color: #2b6cb0; }
+  .shelf-item.instructions h4 { color: #975a16; }
+  .shelf-item.memory h4 { color: #276749; }
+  .shelf-item p {
+    font-size: clamp(11px, 1.7vw, 13px);
+    color: #4a5568;
+  }
+  .shelf-item ul {
+    list-style: none;
+    padding: 0;
+  }
+  .shelf-item ul li {
+    font-size: clamp(11px, 1.7vw, 13px);
+    color: #4a5568;
+    padding: 2px 0;
+  }
+  .shelf-item ul li::before {
+    content: "📄 ";
+    font-size: 11px;
+  }
+
+  /* 矢印→チャットへ */
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 12px 0;
+  }
+
+  .chat-result {
+    background: #faf5ff;
+    border: 1.5px solid #d6bcfa;
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .chat-result .icon { font-size: 22px; flex-shrink: 0; }
+  .chat-result p { font-size: clamp(12px, 1.8vw, 14px); color: #44337a; }
+  .chat-result strong { color: #6b21a8; }
+
+  /* ===== 副次効果 ===== */
+  .effect-section {
+    margin-bottom: clamp(20px, 4vw, 40px);
+  }
+  .effect-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+  }
+  .effect-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: clamp(14px, 2.5vw, 22px);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    text-align: center;
+  }
+  .effect-card .emoji { font-size: 32px; margin-bottom: 8px; }
+  .effect-card h4 {
+    font-size: clamp(13px, 2vw, 15px);
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 6px;
+  }
+  .effect-card p {
+    font-size: clamp(11px, 1.7vw, 13px);
+    color: #718096;
+  }
+
+  /* SVG矢印 */
+  .svg-arrow { display: block; margin: 0 auto; }
+
+  /* フッター定義 */
+  .definition {
+    background: #2d3748;
+    color: #e2e8f0;
+    border-radius: 14px;
+    padding: clamp(16px, 3vw, 28px);
+    font-size: clamp(12px, 1.8vw, 14px);
+    line-height: 1.8;
+  }
+  .definition strong { color: #90cdf4; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- ヘッダー -->
+  <div class="header">
+    <h1>🗂️ Claude の Projects とは？</h1>
+    <p>テーマ別の「棚」に文脈・資料・指示をまとめ、毎回説明し直さずに済む作業スペース</p>
+  </div>
+
+  <!-- ① Before / After 比較 -->
+  <div class="compare-section">
+    <div class="section-label">① 何が変わるか</div>
+    <div class="compare-grid">
+      <!-- Before -->
+      <div class="compare-card before">
+        <h3>❌ Projects なし</h3>
+        <div class="chat-bubble highlight">「このシステムはXXXで、READMEは…」</div>
+        <div class="chat-bubble highlight">「先ほどのシステムですが、改めて説明すると…」</div>
+        <div class="chat-bubble highlight">「またバグです。前提を再度お伝えします…」</div>
+        <p style="font-size:12px;color:#718096;margin-top:8px;">毎回ゼロから説明し直しが必要</p>
+      </div>
+
+      <!-- 矢印 -->
+      <div class="compare-arrow">→</div>
+
+      <!-- After -->
+      <div class="compare-card after">
+        <h3>✅ Projects あり</h3>
+        <div class="chat-bubble ok">README.md を棚に入れておく（1回）</div>
+        <div class="chat-bubble ok">「バグが出ました。〇〇行目が…」</div>
+        <div class="chat-bubble ok">「仕様変更したいんですが…」</div>
+        <p style="font-size:12px;color:#718096;margin-top:8px;">文脈は棚が保持。本題だけ話せる</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② 棚の中身 構造図 -->
+  <div class="structure-section">
+    <div class="section-label">② Project（棚）の構造</div>
+    <div class="shelf-card">
+      <div class="shelf-title">
+        <span class="icon">📦</span>
+        <h2>Project：「SPRING ARK 開発」</h2>
+      </div>
+
+      <div class="shelf-contents">
+        <!-- ファイル -->
+        <div class="shelf-item files">
+          <h4>📁 ファイル（コンテキスト資料）</h4>
+          <ul>
+            <li>README.md</li>
+            <li>設計書.pdf</li>
+            <li>仕様まとめ.txt</li>
+          </ul>
+          <p style="margin-top:8px;">Claudeが参照する「知識の棚」</p>
+        </div>
+
+        <!-- 手順 -->
+        <div class="shelf-item instructions">
+          <h4>📋 カスタム手順（スタンディング指示）</h4>
+          <p>「エラーはまずログを確認して」<br>「回答は日本語で箇条書きで」<br>「コードはTypeScriptで書いて」</p>
+          <p style="margin-top:8px;">Claudeへの振る舞い方の指定</p>
+        </div>
+
+        <!-- メモリ -->
+        <div class="shelf-item memory">
+          <h4>🧠 メモリ（記憶）</h4>
+          <p>このProject内で蓄積された文脈・決定事項を自動管理。他のProjectとは独立。</p>
+        </div>
+      </div>
+
+      <!-- 矢印 -->
+      <div class="flow-arrow">
+        <svg class="svg-arrow" width="32" height="32" viewBox="0 0 32 32">
+          <line x1="16" y1="2" x2="16" y2="24" stroke="#9f7aea" stroke-width="2.5" stroke-linecap="round"/>
+          <polyline points="8,16 16,26 24,16" fill="none" stroke="#9f7aea" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <!-- チャット -->
+      <div class="chat-result">
+        <span class="icon">💬</span>
+        <p>Project 内のチャットは<strong>すべての会話で共通の文脈を自動参照</strong>。<br>ファイル・手順・メモリが毎回引き継がれるため、本題だけ伝えれば即座に的確な回答が得られる。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 副次効果 -->
+  <div class="effect-section">
+    <div class="section-label">③ 副次的な効果</div>
+    <div class="effect-grid">
+      <div class="effect-card">
+        <div class="emoji">🔍</div>
+        <h4>チャット履歴の整理</h4>
+        <p>「どの棚のチャットか」で自動分類。後から探しやすくなる</p>
+      </div>
+      <div class="effect-card">
+        <div class="emoji">🚀</div>
+        <h4>すぐ本題に入れる</h4>
+        <p>前提説明ゼロ。バグ・改善・相談を即スタートできる</p>
+      </div>
+      <div class="effect-card">
+        <div class="emoji">🔒</div>
+        <h4>文脈の独立管理</h4>
+        <p>ProjectごとにメモリがIsolated。別プロジェクトと混線しない</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 正式な定義 -->
+  <div class="definition">
+    <strong>📌 正式な定義</strong><br>
+    ProjectsはClaude.aiの機能で、<strong>ファイル（コンテキスト資料）</strong>と<strong>カスタム手順（スタンディング指示）</strong>をひとつの作業空間にまとめ、その空間内のすべての会話で共通の文脈として参照させる仕組み。Projectごとに<strong>メモリ（記憶）</strong>も独立して生成・管理される。
+  </div>
+
+</div>
+</body>
+</html>
