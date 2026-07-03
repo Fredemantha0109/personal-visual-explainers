@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Projects 図解</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
+    background: #f0f4f8;
+    color: #1a2233;
+    padding: 24px 16px 48px;
+  }
+
+  .page-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ヘッダー */
+  .header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  .header h1 {
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    font-weight: 800;
+    color: #2d3a8c;
+    letter-spacing: 0.02em;
+  }
+  .header p {
+    margin-top: 8px;
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    color: #4a5568;
+  }
+
+  /* ---- セクション共通 ---- */
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #7c8db5;
+    margin-bottom: 10px;
+  }
+
+  /* ---- 比喩ゾーン ---- */
+  .metaphor-zone {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 12px rgba(44,62,120,0.07);
+  }
+  .shelf-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 16px;
+  }
+  .shelf {
+    flex: 1 1 220px;
+    max-width: 300px;
+    border: 2.5px solid #c7d2f5;
+    border-radius: 12px;
+    background: #f5f7ff;
+    padding: 16px;
+    position: relative;
+  }
+  .shelf-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #2d3a8c;
+    padding: 6px 12px;
+    background: #dde5ff;
+    border-radius: 8px;
+    display: inline-block;
+    margin-bottom: 14px;
+  }
+  .shelf-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    box-shadow: 0 1px 4px rgba(44,62,120,0.08);
+    border-left: 4px solid #7c8db5;
+  }
+  .shelf-item.file { border-left-color: #4f80e2; }
+  .shelf-item.rule { border-left-color: #e26b4f; }
+  .shelf-item.mem  { border-left-color: #4fbf8a; }
+
+  .shelf-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  /* ---- 構造図 ---- */
+  .structure-zone {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 12px rgba(44,62,120,0.07);
+  }
+
+  .struct-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .struct-card {
+    border-radius: 12px;
+    padding: 18px 16px;
+    text-align: center;
+  }
+  .struct-card.blue  { background: #ebf0ff; border: 2px solid #7c9ef5; }
+  .struct-card.orange{ background: #fff3ef; border: 2px solid #f5a07c; }
+  .struct-card.green { background: #edfaf3; border: 2px solid #6fcf97; }
+
+  .struct-card .card-icon { font-size: 2rem; margin-bottom: 8px; }
+  .struct-card .card-name {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .struct-card.blue  .card-name { color: #2d3a8c; }
+  .struct-card.orange .card-name{ color: #9b3e1e; }
+  .struct-card.green  .card-name{ color: #1e6640; }
+
+  .struct-card .card-alt {
+    font-size: 0.75rem;
+    color: #7c8db5;
+    margin-bottom: 6px;
+  }
+  .struct-card .card-desc {
+    font-size: 0.83rem;
+    color: #3a4a6a;
+    line-height: 1.55;
+  }
+
+  /* ---- 矢印SVGライン ---- */
+  .arrow-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin: 8px 0;
+    flex-wrap: wrap;
+  }
+  .arrow-box {
+    background: #2d3a8c;
+    color: #fff;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .arrow-svg {
+    margin: 0 4px;
+  }
+
+  /* ---- フローゾーン ---- */
+  .flow-zone {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 12px rgba(44,62,120,0.07);
+  }
+  .flow-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    align-items: stretch;
+    justify-content: center;
+    margin-top: 16px;
+  }
+  .flow-step {
+    flex: 1 1 140px;
+    max-width: 200px;
+    background: #f5f7ff;
+    border-radius: 12px;
+    padding: 16px 12px;
+    text-align: center;
+    border: 2px solid #c7d2f5;
+    position: relative;
+  }
+  .flow-step .step-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: #2d3a8c;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 10px;
+  }
+  .flow-step .step-text {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #1a2233;
+  }
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    color: #7c8db5;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  @media (max-width: 600px) {
+    .flow-steps { flex-direction: column; align-items: center; }
+    .flow-step { max-width: 100%; width: 100%; }
+    .flow-arrow { transform: rotate(90deg); }
+  }
+
+  /* ---- 効果ゾーン ---- */
+  .effect-zone {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 12px rgba(44,62,120,0.07);
+  }
+  .effect-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-top: 16px;
+  }
+  .effect-card {
+    background: #f9fbff;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1.5px solid #dde5ff;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .effect-icon { font-size: 1.6rem; flex-shrink: 0; margin-top: 2px; }
+  .effect-title { font-size: 0.9rem; font-weight: 700; color: #2d3a8c; margin-bottom: 4px; }
+  .effect-desc  { font-size: 0.82rem; color: #4a5568; line-height: 1.55; }
+
+  /* ---- 定義ボックス ---- */
+  .def-zone {
+    background: #2d3a8c;
+    border-radius: 16px;
+    padding: 24px;
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(44,62,120,0.15);
+  }
+  .def-zone .section-label { color: #a0b0e0; }
+  .def-zone .def-text {
+    font-size: clamp(0.87rem, 2vw, 1rem);
+    line-height: 1.8;
+    margin-top: 10px;
+    color: #e8eeff;
+  }
+  .def-zone .def-text strong { color: #fff; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- ヘッダー -->
+  <div class="header">
+    <h1>🗂️ Claude「Projects」とは？</h1>
+    <p>文脈ごとAIに引き継げる、話題専用の作業スペース</p>
+  </div>
+
+  <!-- 1. 比喩：棚のイメージ -->
+  <div class="metaphor-zone">
+    <div class="section-label">🧠 直感的なイメージ</div>
+    <div style="text-align:center; font-size:clamp(0.9rem,2vw,1.05rem); color:#4a5568; margin-bottom:4px;">
+      Projectsは <strong style="color:#2d3a8c;">「話題専用の棚」</strong> ― 棚の中に資料と指示を置いておけば、毎回説明し直さなくて済む
+    </div>
+    <div class="shelf-wrap">
+      <div class="shelf">
+        <div class="shelf-title">📁 SPRING ARK開発</div>
+        <div class="shelf-item file"><span class="shelf-icon">📄</span>README.md（システム概要）</div>
+        <div class="shelf-item file"><span class="shelf-icon">📄</span>DB設計書.pdf</div>
+        <div class="shelf-item rule"><span class="shelf-icon">📋</span>「日本語でコードにコメントを」</div>
+        <div class="shelf-item mem"><span class="shelf-icon">💾</span>前回のバグ対応内容（記憶）</div>
+      </div>
+      <div class="shelf">
+        <div class="shelf-title">📁 マーケティング戦略</div>
+        <div class="shelf-item file"><span class="shelf-icon">📄</span>競合分析レポート.xlsx</div>
+        <div class="shelf-item file"><span class="shelf-icon">📄</span>ペルソナ定義.md</div>
+        <div class="shelf-item rule"><span class="shelf-icon">📋</span>「提案は必ず3案出すこと」</div>
+        <div class="shelf-item mem"><span class="shelf-icon">💾</span>前回の施策レビュー（記憶）</div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:14px; font-size:0.82rem; color:#7c8db5;">
+      ▲ 棚ごとに内容は完全に独立。別の棚の内容は混入しない
+    </div>
+  </div>
+
+  <!-- 2. 構成要素 -->
+  <div class="structure-zone">
+    <div class="section-label">🔩 Projectsを構成する3要素</div>
+    <div class="struct-grid">
+      <div class="struct-card blue">
+        <div class="card-icon">📄</div>
+        <div class="card-name">ファイル</div>
+        <div class="card-alt">旧称：ナレッジ</div>
+        <div class="card-desc">README・設計書・レポートなど<br>コンテキスト資料を置く場所。<br>「これが前提知識」となる素材。</div>
+      </div>
+      <div class="struct-card orange">
+        <div class="card-icon">📋</div>
+        <div class="card-name">カスタム手順</div>
+        <div class="card-alt">スタンディング指示</div>
+        <div class="card-desc">Claudeの振る舞い方を定義。<br>「常に〇〇で答えよ」など、<br>毎回書かなくていい指示を固定。</div>
+      </div>
+      <div class="struct-card green">
+        <div class="card-icon">💾</div>
+        <div class="card-name">メモリー（記憶）</div>
+        <div class="card-alt">Project独立の記憶領域</div>
+        <div class="card-desc">Project内の会話から生成・蓄積。<br>他のProjectとは分離して管理され、<br>文脈が時間を超えて引き継がれる。</div>
+      </div>
+    </div>
+    <!-- 組み合わせ効果の矢印 -->
+    <div style="margin-top:20px; text-align:center;">
+      <div class="arrow-row">
+        <div class="arrow-box">📄 ファイル</div>
+        <svg class="arrow-svg" width="28" height="20" viewBox="0 0 28 20"><path d="M2 10 H20 M14 4 L26 10 L14 16" stroke="#2d3a8c" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div style="background:#f5f7ff; border:2px dashed #7c9ef5; border-radius:10px; padding:8px 16px; font-size:0.88rem; font-weight:700; color:#2d3a8c;">
+          ✨ 文脈ごとAIに引き継げる<br>作業スペース
+        </div>
+        <svg class="arrow-svg" width="28" height="20" viewBox="0 0 28 20" style="transform:scaleX(-1)"><path d="M2 10 H20 M14 4 L26 10 L14 16" stroke="#2d3a8c" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="arrow-box">📋 手順</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 使い方フロー -->
+  <div class="flow-zone">
+    <div class="section-label">▶️ 使い方の流れ</div>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Projectを作成</strong><br>テーマ名をつけて棚を用意</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>ファイルを投入</strong><br>README・資料などを一度だけアップ</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>手順を設定</strong><br>Claudeへの指示を固定しておく</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>この棚で会話</strong><br>背景説明ゼロで本題から話せる</div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:14px; font-size:0.82rem; color:#7c8db5;">
+      ▲ 2・3は一度設定すれば、以後のすべての会話に自動で適用される
+    </div>
+  </div>
+
+  <!-- 4. 効果 -->
+  <div class="effect-zone">
+    <div class="section-label">✅ Projectsがもたらす効果</div>
+    <div class="effect-grid">
+      <div class="effect-card">
+        <div class="effect-icon">⚡</div>
+        <div>
+          <div class="effect-title">毎回の説明コストゼロ</div>
+          <div class="effect-desc">「これはどういうシステムか」から話し始めなくていい。バグの相談も本題から即スタート。
