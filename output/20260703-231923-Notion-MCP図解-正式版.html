@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notion MCP 図解</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+    background: #f0f2f5;
+    color: #1a1a2e;
+    min-height: 100vh;
+    padding: clamp(16px, 4vw, 40px) clamp(12px, 4vw, 24px);
+  }
+
+  .page-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ヘッダー */
+  .header {
+    text-align: center;
+    margin-bottom: clamp(24px, 5vw, 48px);
+  }
+  .header h1 {
+    font-size: clamp(1.5rem, 4vw, 2.4rem);
+    font-weight: 800;
+    color: #1a1a2e;
+    letter-spacing: -0.5px;
+  }
+  .header .subtitle {
+    font-size: clamp(0.85rem, 2vw, 1.05rem);
+    color: #555;
+    margin-top: 8px;
+  }
+  .badge {
+    display: inline-block;
+    background: #e8f0fe;
+    color: #3b5bdb;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  /* メイン接続図 */
+  .bridge-section {
+    background: #fff;
+    border-radius: 20px;
+    padding: clamp(20px, 4vw, 40px);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    margin-bottom: clamp(20px, 4vw, 32px);
+  }
+
+  .bridge-section h2 {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    font-weight: 700;
+    color: #333;
+    margin-bottom: clamp(16px, 3vw, 28px);
+    text-align: center;
+  }
+
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .node-icon {
+    width: clamp(56px, 10vw, 80px);
+    height: clamp(56px, 10vw, 80px);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  }
+
+  .node-icon.ai { background: linear-gradient(135deg, #667eea, #764ba2); }
+  .node-icon.mcp { background: linear-gradient(135deg, #f093fb, #f5576c); }
+  .node-icon.notion { background: linear-gradient(135deg, #1a1a2e, #16213e); }
+
+  .node-label {
+    font-size: clamp(0.7rem, 1.8vw, 0.9rem);
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+  }
+  .node-sub {
+    font-size: clamp(0.6rem, 1.4vw, 0.75rem);
+    color: #777;
+    text-align: center;
+    max-width: 90px;
+  }
+
+  .arrow-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    margin: 0 clamp(4px, 1.5vw, 16px);
+    padding-bottom: 36px;
+  }
+
+  .arrow-label {
+    font-size: clamp(0.55rem, 1.3vw, 0.72rem);
+    color: #888;
+    text-align: center;
+    margin-bottom: 4px;
+    white-space: nowrap;
+  }
+
+  /* 旧来の比較 */
+  .compare-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(12px, 3vw, 24px);
+    margin-bottom: clamp(20px, 4vw, 32px);
+  }
+
+  @media (max-width: 600px) {
+    .compare-section { grid-template-columns: 1fr; }
+  }
+
+  .compare-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: clamp(16px, 3vw, 28px);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  .compare-card.before { border-top: 4px solid #f5576c; }
+  .compare-card.after { border-top: 4px solid #43e97b; }
+
+  .compare-card h3 {
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    font-weight: 700;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .compare-card.before h3 { color: #f5576c; }
+  .compare-card.after h3 { color: #27ae60; }
+
+  .flow-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    font-size: clamp(0.72rem, 1.6vw, 0.85rem);
+    color: #444;
+  }
+
+  .step-icon { font-size: 1rem; flex-shrink: 0; }
+
+  .step-arrow {
+    text-align: center;
+    color: #ccc;
+    font-size: 1rem;
+    padding: 2px 0;
+  }
+
+  /* 詳細セクション */
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: clamp(12px, 3vw, 20px);
+    margin-bottom: clamp(20px, 4vw, 32px);
+  }
+
+  .detail-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: clamp(16px, 3vw, 24px);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  .detail-card h3 {
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .detail-card p, .detail-card li {
+    font-size: clamp(0.75rem, 1.7vw, 0.875rem);
+    color: #555;
+    line-height: 1.7;
+  }
+
+  .detail-card ul { padding-left: 16px; }
+  .detail-card li { margin-bottom: 4px; }
+
+  /* 認証フロー */
+  .auth-section {
+    background: #fff;
+    border-radius: 20px;
+    padding: clamp(20px, 4vw, 36px);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    margin-bottom: clamp(20px, 4vw, 32px);
+  }
+
+  .auth-section h2 {
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    font-weight: 700;
+    color: #333;
+    margin-bottom: clamp(16px, 3vw, 24px);
+  }
+
+  .auth-flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .auth-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .auth-bubble {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: clamp(0.68rem, 1.5vw, 0.8rem);
+    font-weight: 600;
+    text-align: center;
+    min-width: 90px;
+    max-width: 130px;
+    white-space: nowrap;
+  }
+
+  .auth-num {
+    width: 22px;
+    height: 22px;
+    background: #667eea;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .auth-arrow {
+    color: #aaa;
+    font-size: 1.2rem;
+    align-self: center;
+    padding-bottom: 22px;
+  }
+
+  /* 確認表示 */
+  .confirm-box {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border-radius: 14px;
+    padding: clamp(14px, 3vw, 22px) clamp(16px, 4vw, 28px);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: clamp(12px, 3vw, 20px);
+  }
+
+  .confirm-box .icon { font-size: 1.8rem; flex-shrink: 0; }
+
+  .confirm-box .text {
+    color: #e0e0e0;
+    font-size: clamp(0.75rem, 1.7vw, 0.875rem);
+    line-height: 1.6;
+  }
+
+  .confirm-box .code {
+    font-family: "Courier New", monospace;
+    background: rgba(255,255,255,0.12);
+    color: #7dd56f;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: clamp(0.72rem, 1.6vw, 0.85rem);
+    display: inline-block;
+    margin-top: 6px;
+  }
+
+  /* 定義ボックス */
+  .definition-box {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: clamp(20px, 4vw, 36px);
+    color: #fff;
+    margin-bottom: clamp(20px, 4vw, 32px);
+  }
+
+  .definition-box h2 {
+    font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+    font-weight: 700;
+    margin-bottom: 14px;
+    opacity: 0.9;
+  }
+
+  .def-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(12px, 3vw, 20px);
+  }
+
+  @media (max-width: 500px) {
+    .def-row { grid-template-columns: 1fr; }
+  }
+
+  .def-item {
+    background: rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: clamp(12px, 2.5vw, 18px);
+  }
+
+  .def-item .def-title {
+    font-size: clamp(0.75rem, 1.7vw, 0.85rem);
+    font-weight: 700;
+    opacity: 0.8;
+    margin-bottom: 6px;
+  }
+
+  .def-item .def-body {
+    font-size: clamp(0.72rem, 1.6vw, 0.82rem);
+    line-height: 1.65;
+    opacity: 0.9;
+  }
+
+  /* SVG矢印 */
+  svg.arrow { overflow: visible; }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- ヘッダー -->
+  <div class="header">
+    <div class="badge">📖 概念図解</div>
+    <h1>Notion MCP とは？</h1>
+    <p class="subtitle">AIツールとNotionを直接つなぐ「専用の橋」のしくみ</p>
+  </div>
+
+  <!-- メイン接続図 -->
+  <div class="bridge-section">
+    <h2>🌉 全体構造 ― AIとNotionの接続</h2>
+    <div class="flow-diagram">
+
+      <!-- AIツール -->
+      <div class="node">
+        <div class="node-icon ai">🤖</div>
+        <div class="node-label">AIツール</div>
+        <div class="node-sub">Cursor / Claude など</div>
+      </div>
+
+      <!-- 矢印1 -->
+      <div class="arrow-area">
+        <div class="arrow-label">リクエスト</div>
+        <svg class="arrow" width="clamp(40px,8vw,80px)" height="28" viewBox="0 0 80 28" style="width:clamp(40px,8vw,80px)">
+          <defs>
+            <marker id="ah1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#f5576c"/>
+            </marker>
+          </defs>
+          <line x1="4" y1="14" x2="70" y2="14" stroke="#f5576c" stroke-width="2.5" marker-end="url(#ah1)" stroke-dasharray="6,3"/>
+        </svg>
+      </div>
+
+      <!-- MCP（橋） -->
+      <div class="node">
+        <div class="node-icon mcp">🔌</div>
+        <div class="node-label">Notion MCP</div>
+        <div class="node-sub">専用の橋<br>（プロトコル）</div>
+      </div>
+
+      <!-- 矢印2 -->
+      <div class="arrow-area">
+        <div class="arrow-label">API通信</div>
+        <svg class="arrow" width="clamp(40px,8vw,80px)" height="28" viewBox="0 0 80 28" style="width:clamp(40px,8vw,80px)">
+          <defs>
+            <marker id="ah2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#1a1a2e"/>
+            </marker>
+          </defs>
+          <line x1="4" y1="14" x2="70" y2="14" stroke="#1a1a2e" stroke-width="2.5" marker-end="url(#ah2)" stroke-dasharray="6,3"/>
+        </svg>
+      </div>
+
+      <!-- Notion -->
+      <div class="node">
+        <div class="node-icon notion">📝</div>
+        <div class="node-label">Notion</div>
+        <div class="node-sub">データベース<br>ページ・情報</div>
+      </div>
+
+    </div>
+
+    <!-- 確認表示 -->
+    <div class="confirm-box">
+      <div class="icon">✅</div>
+      <div class="text">
+        接続成功の確認方法 ― ツール画面に以下のような表示が出ればOK！
+        <div class="code">14 tools, 2 resources enabled</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 従来 vs MCP比較 -->
+  <div class="compare-section">
+    <!-- 従来 -->
+    <div class="compare-card before">
+      <h3>❌ MCPなし（従来）</h3>
+      <div class="flow-steps">
+        <div class="step"><span class="step-icon">👤</span>自分でNotionを開く</div>
+        <div class="step-arrow">↓</div>
+        <div class="step"><span class="step-icon">📋</span>内容をコピー</div>
+        <div class="step-arrow">↓</div>
+        <div class="step"><span class="step-icon">🤖</span>AIにペーストして質問</div>
+        <div class="step-arrow">↓</div>
+        <div class="step"><span class="step-icon">📝</span>AIの回答を自分でNotionに書き戻す</div>
+      </div>
+    </div>
+
+    <!-- MCP後 -->
+    <div class="compare-card after">
+      <h3>✅ MCPあり（新方式）</h3>
+      <div class="flow-steps">
+        <div class="step"><span class="step-icon">🗣️</span>AIに「Notionを調べて」と指示</div>
+        <div class="step-arrow">↓</div>
+        <div class="step"><span class="step-icon">🔌</span>MCP経由でAIが直接アクセス</div>
+        <div class
