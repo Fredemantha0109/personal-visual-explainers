@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notion MCP図解</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 1rem;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: clamp(350px, 100%, 850px);
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        h1 {
+            font-size: clamp(1.3rem, 4vw, 1.8rem);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #64b5f6;
+        }
+        .section {
+            background: #0f3460;
+            border-left: 4px solid #64b5f6;
+            padding: clamp(0.8rem, 3vw, 1.2rem);
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+        .section h2 {
+            font-size: clamp(0.95rem, 3vw, 1.1rem);
+            margin-bottom: 0.6rem;
+            color: #64b5f6;
+        }
+        .section p {
+            font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+            line-height: 1.5;
+        }
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 0.8rem;
+        }
+        .flow-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .flow-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #64b5f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #0f3460;
+            flex-shrink: 0;
+        }
+        .flow-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+        }
+        .feature-list {
+            display: grid;
+            gap: 0.6rem;
+            margin-top: 0.8rem;
+        }
+        .feature-item {
+            background: rgba(100, 181, 246, 0.1);
+            padding: 0.6rem 0.8rem;
+            border-radius: 3px;
+            font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+            border-left: 3px solid #64b5f6;
+        }
+        .status-check {
+            background: rgba(76, 175, 80, 0.15);
+            padding: 0.8rem;
+            border-radius: 3px;
+            margin-top: 0.8rem;
+            font-size: clamp(0.75rem, 2.5vw, 0.85rem);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.7rem;
+            color: #666;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Notion MCP</h1>
+
+        <div class="section">
+            <h2>📌 つかみ（何か？）</h2>
+            <p>NotionとAIツール（Cursor、Claude等）を直結する「橋」。コピペなしでAIがNotionデータを自由に読み書きできるようになる。</p>
+        </div>
+
+        <div class="section">
+            <h2>⚙️ 仕組み</h2>
+            <div class="flow-diagram">
+                <div class="flow-item">
+                    <div class="flow-dot">1</div>
+                    <div class="flow-text"><strong>OAuth認証で接続</strong><br>APIトークンの自分発行が不要（Cursor等で自動実行）</div>
+                </div>
+                <div class="flow-item">
+                    <div class="flow-dot">2</div>
+                    <div class="flow-text"><strong>MCPプロトコル稼働</strong><br>標準化された方法でNotion APIを公開</div>
+                </div>
+                <div class="flow-item">
+                    <div class="flow-dot">3</div>
+                    <div class="flow-text"><strong>データベース連携</strong><br>AIが直接読み書き・検索・更新を実行</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>✨ メリット</h2>
+            <div class="feature-list">
+                <div class="feature-item">🔄 コピペ作業を廃止</div>
+                <div class="feature-item">🔐 OAuth認証で安全</div>
+                <div class="feature-item">⚡ リアルタイム連携</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>✅ 接続確認方法</h2>
+            <div class="status-check">
+                接続成功時に「<strong>14 tools, 2 resources enabled</strong>」のような表示が出れば OK
+            </div>
+        </div>
+
+        <div class="footer">
+            詳しい正式版は1〜2分後にNotionの図解ログに追加されます
+        </div>
+    </div>
+</body>
+</html>
+---HTML-END---
