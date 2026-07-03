@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Projects図解</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #0f1419;
+      color: #e8eaed;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: clamp(12px, 5vw, 20px);
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 clamp(8px, 4vw, 16px);
+    }
+    h1 {
+      font-size: clamp(20px, 6vw, 28px);
+      margin-bottom: clamp(16px, 4vw, 24px);
+      text-align: center;
+      color: #60a5fa;
+    }
+    .concept {
+      background: #1a1f2e;
+      border-left: 4px solid #60a5fa;
+      padding: clamp(12px, 3vw, 16px);
+      margin-bottom: clamp(16px, 4vw, 24px);
+      border-radius: 4px;
+      font-size: clamp(13px, 2vw, 15px);
+    }
+    .flow {
+      display: grid;
+      gap: clamp(12px, 3vw, 16px);
+      margin-bottom: clamp(20px, 5vw, 28px);
+    }
+    .flow-item {
+      background: #1a1f2e;
+      padding: clamp(12px, 3vw, 16px);
+      border-radius: 4px;
+      border: 1px solid #333844;
+    }
+    .flow-label {
+      font-size: clamp(11px, 1.8vw, 12px);
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .flow-title {
+      font-size: clamp(14px, 2.5vw, 16px);
+      font-weight: 600;
+      color: #60a5fa;
+      margin-bottom: 6px;
+    }
+    .flow-desc {
+      font-size: clamp(13px, 2vw, 14px);
+      color: #cbd5e1;
+    }
+    .arrow {
+      text-align: center;
+      color: #60a5fa;
+      font-size: clamp(18px, 4vw, 24px);
+      margin: clamp(4px, 2vw, 8px) 0;
+      height: clamp(20px, 3vw, 28px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .benefit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: clamp(12px, 3vw, 16px);
+      margin-bottom: clamp(20px, 5vw, 28px);
+    }
+    .benefit {
+      background: #1a1f2e;
+      padding: clamp(12px, 3vw, 14px);
+      border-radius: 4px;
+      border: 1px solid #333844;
+      text-align: center;
+    }
+    .benefit-icon {
+      font-size: clamp(20px, 4vw, 24px);
+      margin-bottom: 8px;
+    }
+    .benefit-text {
+      font-size: clamp(12px, 1.8vw, 13px);
+      color: #cbd5e1;
+    }
+    .key-point {
+      background: #1e2a3a;
+      border: 1px solid #2d4a62;
+      padding: clamp(12px, 3vw, 16px);
+      border-radius: 4px;
+      margin-bottom: clamp(16px, 4vw, 20px);
+      font-size: clamp(13px, 2vw, 14px);
+      color: #cbd5e1;
+    }
+    .key-point strong {
+      color: #60a5fa;
+    }
+    .footer-note {
+      font-size: clamp(10px, 1.5vw, 11px);
+      color: #64748b;
+      text-align: center;
+      margin-top: clamp(24px, 6vw, 32px);
+      padding-top: clamp(12px, 3vw, 16px);
+      border-top: 1px solid #333844;
+    }
+    @media (min-width: 768px) {
+      .flow {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .benefit-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🗂️ Claude Projects</h1>
+
+    <div class="concept">
+      📌 <strong>Projectsとは？</strong><br>
+      特定の話題専用の「棚」。ファイルと手順をセットで保存し、その棚内のすべての会話で共通の文脈として参照できるAI作業スペース。
+    </div>
+
+    <div class="flow">
+      <div class="flow-item">
+        <div class="flow-label">Step 1</div>
+        <div class="flow-title">📄 ファイル（資料）を置く</div>
+        <div class="flow-desc">README.md、仕様書、コード、参考資料など、棚に必要なすべての情報を保存</div>
+      </div>
+      
+      <div class="arrow">↓</div>
+      
+      <div class="flow-item">
+        <div class="flow-label">Step 2</div>
+        <div class="flow-title">📋 手順（指示）を置く</div>
+        <div class="flow-desc">「こういうとき、こう返してね」という Claudeへの振る舞い指示をセット</div>
+      </div>
+      
+      <div class="arrow">↓</div>
+      
+      <div class="flow-item">
+        <div class="flow-label">Result</div>
+        <div class="flow-title">✨ 文脈付きで相談できる</div>
+        <div class="flow-desc">毎回「このプロジェクトは何か」と説明する必要がなく、そのまま質問できる</div>
+      </div>
+    </div>
+
+    <div class="benefit-grid">
+      <div class="benefit">
+        <div class="benefit-icon">⏱️</div>
+        <div class="benefit-text">毎回の説明が不要<br>→ 時間短縮</div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">📂</div>
+        <div class="benefit-text">チャット履歴が整理される<br>→ 検索性UP</div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">🧠</div>
+        <div class="benefit-text">Project毎に独立メモリー<br>→ 文脈が混じらない</div>
+      </div>
+    </div>
+
+    <div class="key-point">
+      <strong>【具体例】</strong><br>
+      「SPRING ARK開発」という棚を作成 → README.mdを入れておく → 次にバグ相談をするときも、いきなり「このコード見てほしい」と質問できる
+    </div>
+
+    <div class="footer-note">
+      詳しい正式版は1〜2分後にNotionの図解ログに追加されます
+    </div>
+  </div>
+</body>
+</html>
