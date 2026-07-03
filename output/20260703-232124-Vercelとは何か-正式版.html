@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vercelとは何か</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
+    background: #0a0a12;
+    color: #e8eaf6;
+    min-height: 100vh;
+    padding: clamp(16px, 4vw, 40px) clamp(12px, 4vw, 24px);
+  }
+
+  .wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    text-align: center;
+    margin-bottom: clamp(28px, 5vw, 52px);
+  }
+  .hero-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    color: #fff;
+    font-size: clamp(10px, 2vw, 12px);
+    font-weight: 700;
+    letter-spacing: .12em;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-size: clamp(22px, 5vw, 42px);
+    font-weight: 900;
+    line-height: 1.2;
+    letter-spacing: -.01em;
+  }
+  .hero h1 span { color: #a78bfa; }
+  .hero-sub {
+    margin-top: 10px;
+    font-size: clamp(13px, 2.5vw, 17px);
+    color: #9ca3d4;
+    line-height: 1.6;
+  }
+
+  /* ===== ONE-LINE SUMMARY ===== */
+  .summary-box {
+    background: linear-gradient(135deg, #1e1b4b 0%, #1a1040 100%);
+    border: 2px solid #6366f1;
+    border-radius: 16px;
+    padding: clamp(16px, 3vw, 28px) clamp(20px, 4vw, 40px);
+    margin-bottom: clamp(28px, 5vw, 48px);
+    text-align: center;
+  }
+  .summary-box .label {
+    font-size: clamp(10px, 1.8vw, 12px);
+    color: #818cf8;
+    letter-spacing: .15em;
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .summary-box p {
+    font-size: clamp(15px, 3vw, 22px);
+    font-weight: 800;
+    color: #e0e7ff;
+    line-height: 1.5;
+  }
+  .summary-box p em {
+    font-style: normal;
+    color: #a78bfa;
+  }
+
+  /* ===== MAIN FLOW ===== */
+  .section-title {
+    font-size: clamp(12px, 2.2vw, 15px);
+    color: #6366f1;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    margin-bottom: clamp(14px, 2.5vw, 22px);
+  }
+
+  .flow-area {
+    margin-bottom: clamp(28px, 5vw, 52px);
+  }
+
+  .flow-steps {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .flow-step {
+    flex: 1 1 140px;
+    max-width: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .step-box {
+    background: #13122a;
+    border: 1.5px solid #312e81;
+    border-radius: 14px;
+    padding: 18px 12px 14px;
+    text-align: center;
+    width: 100%;
+    position: relative;
+  }
+  .step-icon {
+    font-size: clamp(22px, 4vw, 32px);
+    margin-bottom: 8px;
+    display: block;
+  }
+  .step-num {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #6366f1;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .step-title {
+    font-size: clamp(12px, 2vw, 14px);
+    font-weight: 800;
+    color: #e0e7ff;
+    margin-bottom: 4px;
+  }
+  .step-desc {
+    font-size: clamp(10px, 1.6vw, 11px);
+    color: #9ca3d4;
+    line-height: 1.5;
+  }
+
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    align-self: center;
+    flex-shrink: 0;
+  }
+  .flow-arrow svg {
+    width: clamp(18px, 3vw, 28px);
+    height: clamp(18px, 3vw, 28px);
+  }
+
+  @media (max-width: 600px) {
+    .flow-steps {
+      flex-direction: column;
+      align-items: center;
+    }
+    .flow-step { max-width: 300px; width: 100%; }
+    .flow-arrow { transform: rotate(90deg); }
+  }
+
+  /* ===== FEATURE CARDS ===== */
+  .features-area {
+    margin-bottom: clamp(28px, 5vw, 52px);
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: clamp(12px, 2.5vw, 20px);
+  }
+  .feat-card {
+    background: #13122a;
+    border: 1.5px solid #312e81;
+    border-radius: 14px;
+    padding: clamp(16px, 2.5vw, 22px);
+    position: relative;
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .feat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 14px 14px 0 0;
+  }
+  .feat-card.c1::before { background: linear-gradient(90deg, #6366f1, #818cf8); }
+  .feat-card.c2::before { background: linear-gradient(90deg, #a855f7, #c084fc); }
+  .feat-card.c3::before { background: linear-gradient(90deg, #06b6d4, #67e8f9); }
+  .feat-card.c4::before { background: linear-gradient(90deg, #10b981, #6ee7b7); }
+  .feat-icon { font-size: clamp(22px, 3.5vw, 28px); margin-bottom: 10px; }
+  .feat-title {
+    font-size: clamp(13px, 2.2vw, 16px);
+    font-weight: 800;
+    color: #e0e7ff;
+    margin-bottom: 6px;
+  }
+  .feat-desc {
+    font-size: clamp(11px, 1.8vw, 13px);
+    color: #9ca3d4;
+    line-height: 1.65;
+  }
+  .feat-tag {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(99,102,241,.2);
+    color: #818cf8;
+  }
+  .feat-card.c2 .feat-tag { background: rgba(168,85,247,.2); color: #c084fc; }
+  .feat-card.c3 .feat-tag { background: rgba(6,182,212,.2); color: #67e8f9; }
+  .feat-card.c4 .feat-tag { background: rgba(16,185,129,.2); color: #6ee7b7; }
+
+  /* ===== VS SURGE ===== */
+  .vs-area {
+    margin-bottom: clamp(28px, 5vw, 52px);
+  }
+  .vs-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: clamp(8px, 2vw, 16px);
+    align-items: start;
+  }
+  @media (max-width: 560px) {
+    .vs-grid {
+      grid-template-columns: 1fr;
+    }
+    .vs-center { display: none; }
+  }
+  .vs-card {
+    border-radius: 14px;
+    padding: clamp(14px, 2.5vw, 22px);
+    border: 1.5px solid;
+  }
+  .vs-card.surge {
+    background: #1a1a2e;
+    border-color: #374151;
+  }
+  .vs-card.vercel {
+    background: linear-gradient(135deg, #1e1b4b, #1a1040);
+    border-color: #6366f1;
+  }
+  .vs-label {
+    font-size: clamp(14px, 2.5vw, 18px);
+    font-weight: 900;
+    margin-bottom: 12px;
+  }
+  .vs-card.surge .vs-label { color: #9ca3af; }
+  .vs-card.vercel .vs-label { color: #a78bfa; }
+  .vs-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 9px;
+    font-size: clamp(11px, 1.8vw, 13px);
+    line-height: 1.5;
+  }
+  .vs-item .dot {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 900;
+  }
+  .vs-card.surge .dot { background: #374151; color: #9ca3af; }
+  .vs-card.vercel .dot { background: #6366f1; color: #fff; }
+  .vs-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 60px;
+  }
+  .vs-badge {
+    background: #1f2937;
+    border: 2px solid #374151;
+    border-radius: 50%;
+    width: clamp(36px, 5vw, 48px);
+    height: clamp(36px, 5vw, 48px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(12px, 2vw, 15px);
+    font-weight: 900;
+    color: #6b7280;
+  }
+
+  /* ===== FOOTER NOTE ===== */
+  .footer-note {
+    text-align: center;
+    font-size: clamp(11px, 1.8vw, 13px);
+    color: #4b5280;
+    padding-top: clamp(12px, 2vw, 20px);
+    border-top: 1px solid #1e1e3a;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">🔧 Webエンジニア用語</div>
+    <h1>Vercel は<span>「公開してくれる係」</span>+α</h1>
+    <p class="hero-sub">コードを push するだけで、ビルド・公開・プレビュー・ロールバックまで全部やってくれる</p>
+  </div>
+
+  <!-- ONE-LINE SUMMARY -->
+  <div class="summary-box">
+    <div class="label">🎯 一言でいうと</div>
+    <p>作った Web アプリを<em>ネットに公開してくれる係</em>。<br>しかも自動で・速く・安全に。</p>
+  </div>
+
+  <!-- MAIN FLOW -->
+  <div class="flow-area">
+    <div class="section-title">📦 どう動くか — GitHub push から公開まで</div>
+    <div class="flow-steps">
+
+      <div class="flow-step">
+        <div class="step-box">
+          <div class="step-num">1</div>
+          <span class="step-icon">💻</span>
+          <div class="step-title">コードを書く</div>
+          <div class="step-desc">ローカルで<br>アプリを開発</div>
+        </div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg viewBox="0 0 28 28" fill="none"><path d="M6 14h16M16 8l6 6-6 6" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-box">
+          <div class="step-num">2</div>
+          <span class="step-icon">🐙</span>
+          <div class="step-title">GitHub に push</div>
+          <div class="step-desc">これだけで<br>Vercel が動き出す</div>
+        </div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg viewBox="0 0 28 28" fill="none"><path d="M6 14h16M16 8l6 6-6 6" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-box">
+          <div class="step-num">3</div>
+          <span class="step-icon">⚡</span>
+          <div class="step-title">自動ビルド</div>
+          <div class="step-desc">Vercel がコードを<br>自動で組み立て</div>
+        </div>
+      </div>
+
+      <div class="flow-arrow">
+        <svg viewBox="0 0 28 28" fill="none"><path d="M6 14h16M16 8l6 6-6 6" stroke="#a855f7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-box">
+          <div class="step-num">4</div>
+          <span class="step-icon">🌍</span>
+          <div class="step-title">ネットに公開</div>
+          <div class="step-desc">CDN 経由で<br>世界中に高速配信</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="features-area">
+    <div class="section-title">✨ Vercel ならではの「+α」機能</div>
+    <div class="features-grid">
+
+      <div class="feat-card c1">
+        <div class="feat-icon">🔍</div>
+        <div class="feat-title">プレビュー環境</div>
+        <div class="feat-desc">本番に反映する前に「まず試せる」専用 URL が自動で生成される。壊れる心配なし。</div>
+        <span class="feat-tag">PREVIEW DEPLOY</span>
+      </div>
+
+      <div class="feat-card c2">
+        <div class="feat-icon">🔌</div>
+        <div class="feat-title">サーバー側の処理も OK</div>
+        <div class="feat-desc">API 呼び出しなどサーバーレス関数も動かせる。静的ファイルだけでなく「フルスタック」に対応。</div>
+        <span class="feat-tag">SERVERLESS</span>
+      </div>
+
+      <div class="feat-card c3">
+        <div class="feat-icon">🔑</div>
+        <div class="feat-title">環境変数の管理</div>
+        <div class="feat-desc">API キーなどの秘密情報をコードに直接書かず、Vercel の管理画面で安全に保管できる。</div>
+        <span class="feat-tag">ENV VARS</span>
+      </div>
+
+      <div class="feat-card c4">
+        <div class="feat-icon">↩️</div>
+        <div class="feat-title">ロールバック</div>
+        <div class="feat-desc">「あ、バグ入れた」というとき、ボタン1つで1つ前のバージョンに即戻せる。</div>
+        <span class="feat-tag">ROLLBACK</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- VS SURGE -->
+  <div class="vs-area">
+    <div class="section-title">⚖️ Surge との違い —
