@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ローカルLLMの仕組み</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
+    background: #f0f4f8;
+    color: #1a202c;
+    padding: 16px;
+  }
+  .page-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    text-align: center;
+    margin-bottom: 6px;
+    color: #1a202c;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    color: #555;
+    margin-bottom: 24px;
+  }
+
+  /* ===== セクションラベル ===== */
+  .section-label {
+    font-size: clamp(0.75rem, 2vw, 0.95rem);
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    color: #fff;
+    background: #4a5568;
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+
+  /* ===== 比較セクション ===== */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .compare-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .compare-card.cloud { border-top: 5px solid #e53e3e; }
+  .compare-card.local { border-top: 5px solid #38a169; }
+  .compare-card h2 {
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .badge {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #fff;
+    font-weight: bold;
+  }
+  .badge.cloud { background: #e53e3e; }
+  .badge.local { background: #38a169; }
+
+  /* ===== フロー図 ===== */
+  .flow-wrap {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 28px;
+    overflow-x: auto;
+  }
+  .flow-title {
+    font-weight: bold;
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    margin-bottom: 16px;
+    color: #2d3748;
+  }
+
+  /* ===== コスト比較 ===== */
+  .cost-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .cost-card {
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .cost-card.cloud-cost { background: #fff5f5; border: 2px solid #fc8181; }
+  .cost-card.local-cost { background: #f0fff4; border: 2px solid #68d391; }
+  .cost-card h3 {
+    font-size: clamp(0.9rem, 2vw, 1.05rem);
+    margin-bottom: 12px;
+  }
+  .cost-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: clamp(0.78rem, 1.8vw, 0.9rem);
+    line-height: 1.5;
+  }
+  .cost-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+  /* ===== ポイントカード ===== */
+  .point-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .point-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    text-align: center;
+  }
+  .point-card .icon { font-size: 2rem; margin-bottom: 8px; }
+  .point-card h4 {
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #2d3748;
+  }
+  .point-card p {
+    font-size: clamp(0.73rem, 1.6vw, 0.85rem);
+    color: #555;
+    line-height: 1.5;
+  }
+
+  /* ===== メモ ===== */
+  .note {
+    background: #fffbeb;
+    border-left: 4px solid #f6ad55;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: clamp(0.78rem, 1.8vw, 0.9rem);
+    color: #744210;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <h1>🖥️ ローカルLLMとは？</h1>
+  <p class="subtitle">自分のパソコンの中だけでAIが動く仕組み。インターネット不要・追加料金なし。</p>
+
+  <!-- ===== 比較：クラウドvsローカル ===== -->
+  <div class="section-label">① クラウドAI vs ローカルLLM　どう違う？</div>
+  <div class="compare-grid">
+
+    <!-- クラウド側 -->
+    <div class="compare-card cloud">
+      <h2>☁️ クラウドAI <span class="badge cloud">ChatGPTなど</span></h2>
+      <!-- SVGフロー -->
+      <svg width="100%" viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-bottom:12px;">
+        <!-- あなた -->
+        <rect x="4" y="55" width="70" height="50" rx="8" fill="#fed7d7" stroke="#e53e3e" stroke-width="1.5"/>
+        <text x="39" y="75" text-anchor="middle" font-size="11" fill="#c53030" font-weight="bold">あなたの</text>
+        <text x="39" y="90" text-anchor="middle" font-size="11" fill="#c53030" font-weight="bold">PC</text>
+        <text x="39" y="105" text-anchor="middle" font-size="10" fill="#c53030">（入力）</text>
+
+        <!-- 矢印右 -->
+        <line x1="74" y1="80" x2="104" y2="80" stroke="#e53e3e" stroke-width="2" marker-end="url(#arrowR)"/>
+        <text x="89" y="72" text-anchor="middle" font-size="9" fill="#888">🌐送信</text>
+
+        <!-- サーバー -->
+        <rect x="104" y="40" width="80" height="80" rx="8" fill="#e53e3e" stroke="#c53030" stroke-width="1.5"/>
+        <text x="144" y="68" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">会社の</text>
+        <text x="144" y="83" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">巨大サーバー</text>
+        <text x="144" y="99" text-anchor="middle" font-size="10" fill="#fca5a5">🏢 外部</text>
+        <text x="144" y="113" text-anchor="middle" font-size="10" fill="#fca5a5">AI処理</text>
+
+        <!-- 矢印右 -->
+        <line x1="184" y1="80" x2="214" y2="80" stroke="#e53e3e" stroke-width="2" marker-end="url(#arrowR)"/>
+        <text x="199" y="72" text-anchor="middle" font-size="9" fill="#888">📩返答</text>
+
+        <!-- 受け取り -->
+        <rect x="214" y="55" width="62" height="50" rx="8" fill="#fed7d7" stroke="#e53e3e" stroke-width="1.5"/>
+        <text x="245" y="78" text-anchor="middle" font-size="11" fill="#c53030" font-weight="bold">あなた</text>
+        <text x="245" y="95" text-anchor="middle" font-size="10" fill="#c53030">（受取）</text>
+
+        <defs>
+          <marker id="arrowR" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#e53e3e"/>
+          </marker>
+        </defs>
+      </svg>
+      <div class="cost-item"><span class="cost-icon">🌐</span><span>質問がインターネット経由で<strong>外部サーバーへ送信</strong>される</span></div>
+      <div class="cost-item"><span class="cost-icon">💳</span><span>使った分だけ<strong>料金が発生</strong>（サブスク or トークン課金）</span></div>
+      <div class="cost-item"><span class="cost-icon">🔒</span><span>データが<strong>外部に出る</strong>ため情報漏洩リスクあり</span></div>
+      <div class="cost-item"><span class="cost-icon">📶</span><span>オフラインでは<strong>使えない</strong></span></div>
+    </div>
+
+    <!-- ローカル側 -->
+    <div class="compare-card local">
+      <h2>🖥️ ローカルLLM <span class="badge local">完全自己完結</span></h2>
+      <svg width="100%" viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-bottom:12px;">
+        <!-- PC大枠 -->
+        <rect x="30" y="20" width="220" height="120" rx="12" fill="#c6f6d5" stroke="#38a169" stroke-width="2" stroke-dasharray="6,3"/>
+        <text x="140" y="40" text-anchor="middle" font-size="10" fill="#276749">--- あなたのPC内部 ---</text>
+
+        <!-- 入力 -->
+        <rect x="44" y="55" width="60" height="45" rx="7" fill="#fff" stroke="#38a169" stroke-width="1.5"/>
+        <text x="74" y="74" text-anchor="middle" font-size="11" fill="#276749" font-weight="bold">入力</text>
+        <text x="74" y="90" text-anchor="middle" font-size="10" fill="#276749">（質問）</text>
+
+        <!-- 矢印 -->
+        <line x1="104" y1="77" x2="126" y2="77" stroke="#38a169" stroke-width="2" marker-end="url(#arrowG)"/>
+
+        <!-- AIモデル -->
+        <rect x="126" y="48" width="70" height="60" rx="7" fill="#38a169" stroke="#276749" stroke-width="1.5"/>
+        <text x="161" y="70" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">AIモデル</text>
+        <text x="161" y="86" text-anchor="middle" font-size="10" fill="#c6f6d5">（LLM）</text>
+        <text x="161" y="100" text-anchor="middle" font-size="10" fill="#c6f6d5">PC内で処理</text>
+
+        <!-- 矢印 -->
+        <line x1="196" y1="77" x2="216" y2="77" stroke="#38a169" stroke-width="2" marker-end="url(#arrowG)"/>
+
+        <!-- 出力 -->
+        <rect x="216" y="55" width="26" height="45" rx="7" fill="#fff" stroke="#38a169" stroke-width="1.5"/>
+        <text x="229" y="74" text-anchor="middle" font-size="10" fill="#276749" font-weight="bold">返</text>
+        <text x="229" y="88" text-anchor="middle" font-size="10" fill="#276749">答</text>
+
+        <defs>
+          <marker id="arrowG" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#38a169"/>
+          </marker>
+        </defs>
+      </svg>
+      <div class="cost-item"><span class="cost-icon">🏠</span><span>AIモデルが<strong>PC内にインストール</strong>されていて全部ローカルで完結</span></div>
+      <div class="cost-item"><span class="cost-icon">💡</span><span>かかるコストは<strong>電気代のみ</strong>（月数十〜数百円程度）</span></div>
+      <div class="cost-item"><span class="cost-icon">🔐</span><span>データが<strong>外部に出ない</strong>ため機密情報も安心</span></div>
+      <div class="cost-item"><span class="cost-icon">✈️</span><span><strong>オフラインでも動く</strong>（飛行機内・ネット不要）</span></div>
+    </div>
+  </div>
+
+  <!-- ===== 電気代のみ の説明 ===== -->
+  <div class="section-label">② 「電気代だけ」ってどういうこと？</div>
+  <div class="cost-grid">
+    <div class="cost-card cloud-cost">
+      <h3>☁️ クラウドAIのコスト構造</h3>
+      <div class="cost-item"><span class="cost-icon">🖥️</span><span><strong>巨大なGPUサーバー</strong>を借りる費用（会社が払う）</span></div>
+      <div class="cost-item"><span class="cost-icon">👷</span><span>エンジニア・運用チームの<strong>人件費</strong></span></div>
+      <div class="cost-item"><span class="cost-icon">🏢</span><span>データセンターの<strong>電気代・場所代</strong></span></div>
+      <div class="cost-item"><span class="cost-icon">💳</span><span>↑これら全部をユーザーから<strong>サブスク料金で回収</strong></span></div>
+    </div>
+    <div class="cost-card local-cost">
+      <h3>🖥️ ローカルLLMのコスト構造</h3>
+      <div class="cost-item"><span class="cost-icon">📥</span><span>モデルファイルは<strong>無料でダウンロード</strong>（OSSで公開）</span></div>
+      <div class="cost-icon-wrapper"></div>
+      <div class="cost-item"><span class="cost-icon">⚡</span><span>AI処理中に<strong>自分のPCが消費する電力のみ</strong>が実費</span></div>
+      <div class="cost-item"><span class="cost-icon">🧮</span><span>例：GPU搭載PCで1時間使用 ≒ <strong>数円〜十数円</strong>程度</span></div>
+      <div class="cost-item"><span class="cost-icon">🔄</span><span>何回使っても<strong>追加課金ゼロ</strong>。月額費用もなし</span></div>
+    </div>
+  </div>
+
+  <!-- ===== 電気代のイメージ ===== -->
+  <div class="flow-wrap">
+    <div class="flow-title">⚡ 電気代のイメージ（家電との比較）</div>
+    <svg width="100%" viewBox="0 0 600 110" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+      <!-- 背景バー -->
+      <rect x="10" y="10" width="580" height="90" rx="10" fill="#f7fafc"/>
+
+      <!-- アイテム1: 電球 -->
+      <text x="55" y="40" text-anchor="middle" font-size="22">💡</text>
+      <text x="55" y="60" text-anchor="middle" font-size="10" fill="#555">LED電球</text>
+      <rect x="15" y="68" width="80" height="10" rx="5" fill="#e2e8f0"/>
+      <rect x="15" y="
